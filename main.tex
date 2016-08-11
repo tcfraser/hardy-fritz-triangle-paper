@@ -1,0 +1,76 @@
+\documentclass[aps, english, twoside, pra, longbibliography]{revtex4-1}
+
+\usepackage{shared}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+    \title{Triangle Scenario Manuscript Title}
+    \author{Thomas C. Fraser}
+    \email{tcfraser@tcfraser.com}
+    \affiliation{Perimeter Institute for Theoretical Physics, Waterloo, Ontario, Canada \\ University of Waterloo, Waterloo, Ontario, Canada}
+    \date{\today}
+    \begin{abstract}
+        This document is my current working draft of a paper to do with causal inference, inflation, incompatibility inequalities, hypergraph transversals and quantum correlations.
+    \end{abstract}
+    \maketitle
+
+    \section{Introduction}
+    \section{Definitions \& Notation}
+    \section{Casual Network Inflation}
+    \section{Casual Network Compatibility}
+    \section{Logical Tautologies}
+    \subsection{Definitions}
+    Blah blah blah \cite{Mansfield_2012}
+    \subsection{Tautologies of The Marginal Problem}
+    \section{Hardy Transversals}
+    \section{Deriving Symmetric Inequalities}
+    \section{Results}
+    \section{Conclusions}
+    \appendix
+    \section{Computationally Efficient Parametrization of the Unitary Group}
+    Spengler, Huber and Hiesmayr \cite{Spengler_2010_Unitary} suggest the parameterization of the unitary group $\mathcal{U}\br{d}$ using a $d\times d$-matrix of real-valued parameters $\lambda_{n, m}$
+
+    \[ U = \bs{\prod_{m=1}^{d-1} \br{\prod_{n=m+1}^{d} \exp\br{i P_n \lambda_{n,m}}\exp\br{i \si_{m,n} \lambda_{m,n}}}} \cdot \bs{\prod_{l=1}^{d} \exp\br{iP_l \lambda_{l,l}}}  \eq \label{eq:spengler_unitary} \]
+
+    Where $P_l$ are one-dimensional projective operators,
+    \[ P_l = \ket{l}\bra{l} \eq \label{eq:projective_operator} \]
+    and the $\si_{m,n}$ are generalized anti-symmetric $\si$-matrices,
+    \[ \sigma_{m,n} = -i \ket{m}\bra{n} +i \ket{n}\bra{m} \]
+    Where $1 \leq m < n \leq d$.
+
+    For the sake of reference, let us label the matrix exponential terms in \eqref{eq:spengler_unitary} in a manner that corresponds to their affect on a orthonormal basis $\bc{\ket{1}, \ldots, \ket{d}}$.
+
+    \begin{align}
+    \begin{split}
+        GP_l &= \exp\br{iP_l \lambda_{l,l}} \\
+        RP_{n,m} &= \exp\br{i P_n \lambda_{n,m}} \\
+        R_{n,m} &= \exp\br{i \si_{m,n} \lambda_{m,n}}
+    \end{split} \eq \label{eq:exp_terms}
+    \end{align}
+
+    It is possible to remove the reliance on matrix exponential operations in \eqref{eq:spengler_unitary} by utilizing the explicit form of the exponential terms in \eqref{eq:exp_terms}. As a first step, recognize the defining property of the projective operators \eqref{eq:projective_operator},
+    \[ P_l^k = \br{\ket{l}\bra{l}}^k = \ket{l}\bra{l} = P_l \]
+    This greatly simplifies the global phase terms $GP_l$,
+    \[ GP_l = \exp\br{iP_l \lambda_{l,l}} = \sum_{k=0}^{\inf} \f{\br{iP_l \lambda_{l,l}}^k}{k!} = \mathbb{I} + \sum_{k=1}^{\inf} \f{\br{i \lambda_{l,l}}^k}{k!}P_l^k = \mathbb{I} + P_l \bs{\sum_{k=1}^{\inf} \f{\br{i \lambda_{l,l}}^k}{k!}} = \mathbb{I} + P_l \br{e^{i \lambda_{l,l}} - 1} \]
+    Analogously for the relative phase terms $RP_{n,m}$,
+    \[ RP_{n,m} = \cdots = \mathbb{I} + P_n \br{e^{i \lambda_{n,m}} - 1} \]
+    Finally, the rotation terms $R_{n,m}$ can also be simplified by examining powers of $i \sigma_{n,m}$,
+    \[ R_{n,m} = \exp\br{i \si_{m,n} \lambda_{m,n}} = \sum_{k=0}^{\inf} \f{\br{\ket{m}\bra{n} - \ket{n}\bra{m}}^k \lambda_{m,n}^k}{k!} \]
+    One can verify that the following properties hold,
+    \begin{align*}
+        \br{\ket{m}\bra{n} - \ket{n}\bra{m}}^0 &= \mathbb{I} \\
+        \forall k \in \N, k \neq 0 : \br{\ket{m}\bra{n} - \ket{n}\bra{m}}^{2k} &= \br{-1}^k\br{\ket{m}\bra{m} + \ket{n}\bra{n}} \\
+        \forall k \in \N : \br{\ket{m}\bra{n} - \ket{n}\bra{m}}^{2k+1} &= \br{-1}^k\br{\ket{m}\bra{n} - \ket{n}\bra{m}}
+    \end{align*}
+    Revealing the simplified form of $R_{n,m}$,
+    \[ R_{n,m} = \mathbb{I} + \br{\ket{m}\bra{m} + \ket{n}\bra{n}} \sum_{j=1}^{\inf} \br{-1}^j\f{\lambda_{n,m}^{2j}}{\br{2j}!} + \br{\ket{m}\bra{n} - \ket{n}\bra{m}} \sum_{j=0}^{\inf} \br{-1}^j\f{\lambda_{n,m}^{2j+1}}{\br{2j+1}!} \]
+    \[ R_{n,m} = \mathbb{I} + \br{\ket{m}\bra{m} + \ket{n}\bra{n}} \br{\cos\lambda_{n,m} - 1} + \br{\ket{m}\bra{n} - \ket{n}\bra{m}} \sin\lambda_{n,m} \]
+
+    \TODO{Explanation of Computational Complexity $\mathcal{O}\br{d^3}$ vs. $\mathcal{O}\br{1}$ using \cite{Moler_2003}}
+    \TODO{Pre-Caching for Fixed Dimension $d$}
+
+    \section{Parametrization of Quantum States \& Measurements}
+
+    \nocite{apsrev41Control}
+    \bibliography{references, revtex-custom-bib}
+\end{document}
