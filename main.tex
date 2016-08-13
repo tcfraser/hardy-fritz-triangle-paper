@@ -1,7 +1,47 @@
-\documentclass[aps, english, twoside, pra, longbibliography]{revtex4-1}
+\documentclass[aps, 10pt, english, twoside, pra, longbibliography]{revtex4-1}
 
 \usepackage{shared}
-\setlength{\parindent}{0pt}
+\usepackage{xparse}
+\usepackage{cleveref}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\hgraph}{\mathcal{H}}
+\newcommand{\graph}{\mathcal{G}}
+\newcommand{\nodes}{\mathcal{N}}
+\newcommand{\weights}{\mathcal{W}}
+\newcommand{\edges}{\mathcal{E}}
+\newcommand{\trans}{\mathcal{T}}
+\newcommand{\ind}{\mathcal{I}}
+
+\newcommand{\setoperator}[1]{%
+\expandafter\DeclareDocumentCommand\csname#1\endcsname{O{} O{} m}{{\text{#1}_{##1}^{##2}\!}\br{##3}}%
+}
+
+\setoperator{Pa}
+\setoperator{Ch}
+\setoperator{An}
+\setoperator{Sub}
+\setoperator{AnSub}
+\setoperator{AnSub}
+% \newcommand{\Pa}[2][]{{\mathsf{Pa}_{#1}\!}\br{#2}}
+
+\newcommand{\term}[1]{\textcolor{Mahogany}{\textbf{#1}}}
+\newcommand{\outc}[1]{o\!\bs{#1}}
+\newcommand{\prob}[2][]{\ifthenelse{\equal{#1}{}}{P}{P_{#1}}\!\br{#2}}
+
+\usepackage{kbordermatrix}
+\renewcommand{\kbldelim}{(}% Left delimiter
+\renewcommand{\kbrdelim}{)}% Right delimiter
+% \setlength{\parindent}{0pt}
 
 \begin{document}
     \title{Triangle Scenario Manuscript Title}
@@ -16,30 +56,300 @@
 
     \section{Introduction}
     \section{Definitions \& Notation}
-    \section{Casual Network Inflation}
-    \section{Casual Network Compatibility}
-    \section{Logical Tautologies}
-    \subsection{Definitions}
-    Blah blah blah \cite{Mansfield_2012}
+
+    \begin{definition}
+        Borrowing the notation from \cite{Fritz_2014}, each random variable $v$ has a set of all possible outcomes called the \term{outcome space} or sample space and is denoted $O_v$. When referencing a \textit{specific} element of $O_v$ or outcome of $v$, the notation $\outc{v}$ is used. This notation generalizes to set of random variables $V = \bc{v_1, \ldots, v_{\abs{V}}}$; the outcome space $O_V$ for a set of random variables $V$ is the Cartesian product of the individual outcome spaces,
+        \[ O_V \defined O_{v_1} \times \cdots \times O_{v_{\abs{V}}} \]
+        Similarly, a specific outcome of $\outc{V} \in O_V$ is used to reference a particular collection of outcomes,
+        \[ \outc{V} \defined \bc{\outc{v_1}, \outc{v_2}, \ldots, \outc{v_{\abs{V}}} } \]
+    \end{definition}
+
+    \begin{definition}
+        \label{def:extendable}
+        An outcome $\outc{V} \in O_V$ over the set $V$ is said to be \term{extendable} to an outcome $\outc{W} \in O_W$ over the set $W$ if $\outc{V}$ is contained in $\outc{W}$:
+        \[ \outc{V} \subseteq \outc{W} \]
+        This also implies the necessary condition that $V \subseteq W$. The idea being that a \textit{less specific} outcome $\outc{V}$ can be made \textit{more specific} by assigning outcomes to the remaining random variables in $W \setminus V$.
+    \end{definition}
+
+    \begin{definition}
+        The set of all extendable outcomes of $\outc{V}$ in $O_{W}$ is called the \term{extendable set} and can be written as,
+        \[ \outc{V} \times O_{W\setminus V} = \bc{\outc{W} \in O_{W} \mid \outc{V} \subseteq \outc{W}} \subseteq O_{W} \]
+    \end{definition}
+
+    \begin{example}
+        Consider two sets of random variables $V = \bc{a, b}$ and $W = \bc{a, b, c}$. Clearly $V \subseteq W$; a prerequisite for extendability. Also take all individual outcome spaces to be finite and of order 3: $O_a = O_b = O_c = \bc{1,2,3}$. Then $\outc{V} = \outc{\bc{a,b}} = \bc{a = 1, b = 2}$ is extendable to the outcome $\outc{W} = \bc{a = 1, b = 2, c = 1}$, and the extendable set of $\outc{V}$ in $O_{W}$ is,
+        \[ \outc{V} \times O_{W\setminus V} = \outc{\bc{a,b}} \times O_c = \bc{\bc{a = 1, b = 2, c = 1}, \bc{a = 1, b = 2, c = 2}, \bc{a = 1, b = 2, c = 3}} \]
+    \end{example}
+
+    \begin{definition}
+        \label{def:graph}
+        A \term{graph} is an ordered tuple $\br{\nodes, \edges}$ of \textit{nodes} and \textit{edges} respectively where the nodes can represent any object and the edges are pairs of nodes. For convenience of notation, one defines an index set over the nodes denoted $\ind_\nodes$.
+        \[ \nodes = \bc{n_i \mid i \in \ind_\nodes} \quad \edges = \bc{\bc{n_j, n_k} \mid j,k \in \ind_\nodes} \]
+    \end{definition}
+
+    \begin{definition}
+        \label{def:directed_graph}
+        A \term{directed graph} $\graph$ is an ordered tuple $\br{\nodes, \edges}$ of \textit{nodes} and \textit{edges} respectively where the nodes can represent any object and the edges are \textit{ordered} pairs of nodes. For convenience of notation, one defines an index set over the nodes denoted $\ind_\nodes$.
+        \[ \nodes = \bc{n_i \mid i \in \ind_\nodes} \quad \edges = \bc{n_j \to n_k \mid j,k \in \ind_\nodes} \]
+    \end{definition}
+
+    \begin{definition}
+        \label{def:graph_terms}
+        The following definitions are common language in directed graph theory. Let $n, m \in \nodes$ be example nodes of the graph $\graph$.
+        \begin{itemize}
+            \item The \term{parents of a node}: $\Pa[\graph]{n} \defined \bc{m \mid m \to n}$
+            \item The \term{children of a node}: $\Ch[\graph]{n} \defined \bc{m \mid n \to m}$
+            \item The \term{ancestry of a node}: $\An[\graph]{n} \defined \bigcup_{i\in\mathbb{W}} \Pa[\graph][i]{n}$ where $\Pa[\graph][i]{n} \defined \Pa[\graph]{\Pa[\graph][i-1]{n}}$ and $\Pa[\graph][0]{n} = n$
+        \end{itemize}
+        All of these terms can be generalized to sets of nodes $N \subseteq \nodes$ through union over the elements,
+        \begin{itemize}
+            \item The \term{parents of a node set}: $\Pa[\graph]{N} \defined \bigcup_{n\in N}\Pa[\graph]{n}$
+            \item The \term{children of a node set}: $\Ch[\graph]{N} \defined \bigcup_{n\in N}\Ch[\graph]{n}$
+            \item The \term{ancestry of a node set}: $\An[\graph]{N} \defined \bigcup_{n\in N}\An[\graph]{n}$
+        \end{itemize}
+        Moreover, an \term{induced subgraph} of $\graph$ due to a set of nodes $N \subseteq \nodes$ is the graph composed of $N$ and all edges $e \in \edges$ of the original graph that are contained in $N$.
+        \[ \Sub[\graph]{N} \defined \br{N, \bc{e_i \mid i \in \ind_\edges, e_i \subseteq N}}\]
+        An \term{ancestral subgraph} of $\graph$ due to $N \subseteq \nodes$ is the induced subgraph due to the ancestry of $N$.
+        \[ \AnSub[\graph]{N} \defined \Sub[\graph]{\An[\graph]{N}} \]
+    \end{definition}
+
+    \begin{definition}
+        \label{def:dag}
+        A \term{directed acyclic graph} or \term{DAG} $\graph$ is an directed graph \cref{def:directed_graph} with the additional property that no node $n$ is in its set of \term{ancestors}.
+        \[ \forall n \in \nodes : n \notin \bigcup_{i\in\mathbb{N}} \Pa[\graph][i]{n}\]
+        Notice the difference between using the natural numbers $\mathbb{N}$ to distinguish \textit{ancestors} from \textit{ancestry}.
+    \end{definition}
+
+    \begin{definition}
+        \label{def:hypergraph}
+        A \term{hypergraph} denoted $\hgraph$ is an ordered tuple $\br{\nodes, \edges}$ of \textit{nodes} and \textit{edges} respectively where the nodes can represent any object and the edges are \textit{subsets} of nodes. For convenience of notation, one defines an index set over the nodes and edges of a hypergraph $\hgraph$ denoted $\ind_\nodes$ and $\ind_\edges$ respectively.
+        \[ \hgraph = \br{\nodes, \edges} \quad \nodes = \bc{n_i \mid i \in \ind_\nodes} \quad \edges = \bc{e_i \mid i \in \ind_\edges, e_i \subseteq \nodes} \]
+        Note that whenever the index for an edge or node is arbitrary, it will be omitted. There is a dual correspondence between edges $e \in \edges$ and nodes $n \in \nodes$ in a Hypergraph. An edge $e$ is viewed as a set of nodes $\bc{n_i}$, and a node $n$ can be viewed as the set of edges $\bc{e_i}$ that contain it.
+    \end{definition}
+
+    \begin{definition}
+        A \term{hypergraph transversal} (or edge hitting set) $\trans$ of a hypergraph $\hgraph$ is a set of nodes $\trans \subseteq \nodes$ that have non-empty intersections with every edge in $\edges$.
+        \[ \trans = \bc{n_i \in \nodes \mid i \in \ind_\trans } \quad \forall e \in \edges : \trans \cap e \neq \emptyset \]
+    \end{definition}
+
+    \begin{definition}
+        A \term{weighted hypergraph} $\hgraph_\weights$ is a regular hypergraph satisfying \cref{def:hypergraph} equipped with a set of weights $\weights$ ascribed to each node such that a weighted hypergraph is written as a triplet $\br{\weights, \nodes, \edges}$.
+        \[ \weights = \bc{w_i \mid i \in \ind_\nodes, w_i \in \R} \]
+        One would say that a particular node $n_i$ carries weight $w_i$ for each $i \in \ind_\nodes$.
+    \end{definition}
+
+    \begin{definition}
+        A \term{bounded transversal} of a weighted hypergraph $\hgraph_\weights$ is a transversal $\trans$ of the unweighted hypergraph $\hgraph$ and a real number $t$ (denoted $\trans_{\leq t}$) such that the sum of the node weights of the transversal is bounded by $t$.
+        \[ \trans_{\leq t} = \bc{n_i \mid i \in \ind_\trans} \quad \text{s.t.} \sum_{j\in\ind_\trans} w_j \leq t \]
+        One can definte analogous \term{(strictly) upper/lower bounded transversals} by considering modifications of the notation: $\trans_{< t}, \trans_{\geq t}, \trans_{> t}$.
+    \end{definition}
+
+    \begin{definition}
+        A \term{causal structure} is simply a DAG with the extra classification of each node into one of two categories; the \term{latent nodes} and \term{observed nodes} denoted $\nodes_L$ and $\nodes_O$. The latent nodes correspond to random variables that are either hidden through some fundamental process or cannot/will not be measured. The observed nodes are random variables that are measurable. Every node is either latent or observed and no node is both:
+        \[ \nodes_L \cap \nodes_O = \emptyset \qquad \nodes_L \cup \nodes_O = \nodes \]
+    \end{definition}
+
+    \TODO{How many definitions do I need to write??}
+
+    \section{Summary of the Inflation Technique}
+    The causal inflation technique, first pioneered by Wolfe, Spekkens, and Fritz \cite{Inflation} and inspired by the \textit{do calculus} and \textit{twin networks} of Ref. \cite{Pearl_2009}, is a family of causal inference techniques that can be used to determine if a probability distribution is compatible or incompatible with a given causal structure. As a preliminary summary, the inflation technique begins by \textit{augmenting} a causal structure with additional nodes, called the inflated causal structure, and then exposes how causal inference tasks on the inflated causal structure can be used to make inferences on the original causal structure. Equipped with the common graph-theoretic terminology and notation of \cref{def:graph_terms}, an inflation can be formally defined as follows:
+    \begin{definition}
+        An \term{inflation} of a causal structure $\graph$ is another causal structure $\graph'$ such that:
+        \[ \forall n' \in \nodes' : \AnSub[\graph']{n'} \sim \AnSub[\graph]{n} \]
+        Where `$\sim$' is notation for equivalence up to removal of the copy-index. To clarify, each node in an inflated causal structure $n' \in \nodes'$ shares a \textit{label} assigned to a node $n \in \nodes$ in the original causal structure together with an additional index called the \term{copy-index}.
+    \end{definition}
+    \TODO{Clean up what is meant by copy index, example maybe?}
+    \TODO{Define injectable sets}
+    \TODO{Define pre-injectable sets and then it's connection to probabilities}
+    \TODO{Define pre-injectable sets}
+    \TODO{State the main Compatibility lemma of inflation}
+    \section{Compatibility, Contextuality and the Marginal Problem}
+    \section{Triangle Scenario}
+
+    \definecolor{obs_outline}{RGB}{51,157,215}
+    \definecolor{obs_fill}{RGB}{222,253,255}
+    \definecolor{obs_text}{RGB}{0,0,0}
+    \definecolor{lat_outline}{RGB}{251,141,54}
+    \definecolor{cause}{RGB}{30, 0, 30}
+    \definecolor{lat_fill}{RGB}{255,213,153}
+    \definecolor{lat_text}{RGB}{0,0,0}
+    \tikzset{square/.style={regular polygon,regular polygon sides=4}}
+    \tikzset{triangle/.style={regular polygon,regular polygon sides=3}}
+    \tikzset{observed/.style={obs_text, triangle, thick, draw=obs_outline, fill=obs_fill, inner sep=0em, minimum size=3em}}
+    \tikzset{latent/.style={lat_text, circle, thick, draw=lat_outline, fill=lat_fill}}
+    % \tikzset{cause/.style={mid arrow/.style={postaction={decorate,decoration={markings, mark=at position .5 with {\arrow[#1]{stealth}}}}},}}
+    \tikzset{
+      % style to apply some styles to each segment of a path
+      on each segment/.style={
+        decorate,
+        decoration={
+          show path construction,
+          moveto code={},
+          lineto code={
+            \path [#1]
+            (\tikzinputsegmentfirst) -- (\tikzinputsegmentlast);
+          },
+          curveto code={
+            \path [#1] (\tikzinputsegmentfirst)
+            .. controls
+            (\tikzinputsegmentsupporta) and (\tikzinputsegmentsupportb)
+            ..
+            (\tikzinputsegmentlast);
+          },
+          closepath code={
+            \path [#1]
+            (\tikzinputsegmentfirst) -- (\tikzinputsegmentlast);
+          },
+        },
+      },
+      % style to add an arrow in the middle of a path
+      mid arrow/.style={postaction={decorate,decoration={
+            markings,
+            mark=at position .6 with {\arrow[scale=1.5, cause]{stealth}}
+          }}},
+    }
+    \begin{figure}
+    \begin{center}
+        \begin{minipage}[b]{.48\textwidth}
+            \centering
+            \scalebox{1.0}{%
+            \begin{tikzpicture}[scale=1]
+                \begin{scope}[every node/.style=observed]
+                    \node (C) at (-2, 0) {$C$};
+                    \node (B) at (2, 0) {$B$};
+                    \node (A) at (0, {2*sqrt(3)}) {$A$};
+                \end{scope}
+                \begin{scope}[every node/.style=latent]
+                    \node (X) at (-1, {sqrt(3)}) {$X$};
+                    \node (Y) at (1, {sqrt(3)}) {$Y$};
+                    \node (Z) at (0, 0) {$Z$};
+                \end{scope}
+                \begin{scope}[every path/.style={draw=cause, thick}]
+                    \path[postaction={on each segment={mid arrow}}]
+                    (X) -- (A)
+                    (X) -- (C)
+                    (Y) -- (A)
+                    (Y) -- (B)
+                    (Z) -- (B)
+                    (Z) -- (C);
+                \end{scope}
+            \end{tikzpicture}
+            }
+            \caption{The casual structure of the triangle scenario. Three variables $A,B,C$ are observable and illustrated as triangles, while $X, Y, Z$ are latent variables illustrated as circles.}
+            \label{fig:triangle_scenario}
+        \end{minipage}\hspace{0.04\textwidth}%
+        \begin{minipage}[b]{.48\textwidth}
+            \centering
+            \scalebox{0.8}{%
+            \newcommand{\ift}{2.3}
+            \begin{tikzpicture}[scale=2]
+                \begin{scope}[every node/.style=observed]
+                    \node (C4) at (-2, 0) {$C_4$};
+                    \node (C3) at ({-2 + 1/\ift}, {1/(\ift*sqrt(3))}) {$C_3$};
+                    \node (C2) at ({-2 + 2*1/\ift}, {2*1/(\ift*sqrt(3))}) {$C_2$};
+                    \node (C1) at ({-2 + 3*1/\ift}, {3*1/(\ift*sqrt(3))}) {$C_1$};
+                    \node (B4) at (2, 0) {$B_4$};
+                    \node (B3) at ({2 - 1/\ift}, {1/(\ift*sqrt(3))}) {$B_3$};
+                    \node (B2) at ({2 - 2*1/\ift}, {2*1/(\ift*sqrt(3))}) {$B_2$};
+                    \node (B1) at ({2 - 3*1/\ift}, {3*1/(\ift*sqrt(3))}) {$B_1$};
+                    \node (A4) at (0, {2*sqrt(3)}) {$A_4$};
+                    \node (A3) at (0, {2*sqrt(3) - 2/sqrt(3)*(1/\ift)}) {$A_3$};
+                    \node (A2) at (0, {2*sqrt(3) - 2*2/sqrt(3)*(1/\ift)}) {$A_2$};
+                    \node (A1) at (0, {2*sqrt(3) - 3*2/sqrt(3)*(1/\ift)}) {$A_1$};
+                \end{scope}
+                \begin{scope}[every node/.style=latent]
+                    \node (X2) at (-1, {sqrt(3)}) {$X_2$};
+                    \node (X1) at ({-1 + 1/\ift}, {sqrt(3) - 1/(\ift*sqrt(3))}) {$X_1$};
+                    \node (Y2) at (1, {sqrt(3)}) {$Y_2$};
+                    \node (Y1) at ({1 - 1/\ift}, {sqrt(3) - 1/(\ift*sqrt(3))}) {$Y_1$};
+                    \node (Z1) at (0, 0.5) {$Z_1$};
+                    \node (Z2) at (0, 0) {$Z_2$};
+                \end{scope}
+                \begin{scope}[every path/.style={draw=cause, thick}]
+                    \path[postaction={on each segment={mid arrow}}]
+                    (X2) -- (A4) (X2) -- (C4) (X2) -- (C2) (X2) -- (A3)
+                    (Y2) -- (A4) (Y2) -- (B4) (Y2) -- (A2) (Y2) -- (B3)
+                    (Z2) -- (B4) (Z2) -- (C4) (Z2) -- (B2) (Z2) -- (C3)
+                    (X1) -- (A1) (X1) -- (C1) (X1) -- (C3) (X1) -- (A2)
+                    (Y1) -- (A1) (Y1) -- (B1) (Y1) -- (A3) (Y1) -- (B2)
+                    (Z1) -- (B1) (Z1) -- (C1) (Z1) -- (B3) (Z1) -- (C2)
+                    ;
+                \end{scope}
+            \end{tikzpicture}
+            }
+            \caption{An inflated causal structure of the triangle scenario \cref{fig:triangle_scenario}.}
+            \label{fig:inflated_triangle_scenario}
+        \end{minipage}
+    \end{center}
+    \end{figure}
+
+
+    Figure 2 in \cite{Fritz_2011}
+    \section{The Fritz Distribution}
+    The \textbf{Fritz distribution} $P_F$ is a quantum-accessible distribution known to be incompatible with the triangle scenario. Explicitly, $P_F$ is a three-party ($A,B,C$), four-outcome ($1,2,3,4$) distribution that has form as follows:
+    \begin{align*}
+    \prob[F]{111} = \prob[F]{221} = \prob[F]{412} = \prob[F]{322} = \prob[F]{233} = \prob[F]{143} = \prob[F]{344} = \prob[F]{434} &= \f{1}{32}\br{2 + \sqrt{2}} \\
+    \prob[F]{121} = \prob[F]{211} = \prob[F]{422} = \prob[F]{312} = \prob[F]{243} = \prob[F]{133} = \prob[F]{334} = \prob[F]{444} &= \f{1}{32}\br{2 - \sqrt{2}}
+    \end{align*}
+    Here the notation $\prob[F]{abc} = P_{ABC}\br{abc} = \prob{A=a,B=b,C=c}$ is used. The Fritz distribution $P_F$ can be realized with the following quantum configuration:
+    \begin{gather*}
+    \rho_{AB} = \ket{\Psi^+}\bra{\Psi^+} \quad \rho_{BC} = \rho_{CA} = \ket{\Phi^+}\bra{\Phi^+} \\
+    M_{A} = \bc{\ket{0\psi_0}\bra{0\psi_0}, \ket{0\psi_{\pi}}\bra{0\psi_{\pi}}, \ket{1\psi_{-\pi/2}}\bra{1\psi_{-\pi/2}}, \ket{1\psi_{\pi/2}}\bra{1\psi_{\pi/2}}} \\
+    M_{B} = \bc{\ket{\psi_{\pi/4}0}\bra{\psi_{\pi/4}0}, \ket{\psi_{5\pi/4}0}\bra{\psi_{5\pi/4}0}, \ket{\psi_{3\pi/4}1}\bra{\psi_{3\pi/4}1}, \ket{\psi_{-\pi/4}1}\bra{\psi_{-\pi/4}1}} \\
+    M_{C} = \bc{\ket{00}\bra{00}, \ket{01}\bra{01}, \ket{10}\bra{10}, \ket{11}\bra{11}} \\
+    \end{gather*}
+    Where for convenience of notation $\psi_x$ is used to denote the superposition,
+    \[ \ket{\psi_x} = \f{1}{\sqrt{2}}\br{\ket{0} + e^{ix}\ket{1}} \]
+    Additionally $\ket{\Psi^+} = \f{1}{\sqrt{2}}\br{\ket{01} + \ket{10}}$ and $\ket{\Phi^+} = \f{1}{\sqrt{2}}\br{\ket{00} + \ket{11}}$ are two maximally entangled Bell states.
+    Fritz first proved it's incompatibility \cite{Fritz_2012} by showing $C$ acts a moderator to ensure measurement pseudo-settings for $A$ and $B$ are independent, satisfying non-broadcasting requirements for the standard Bell scenario. In fact, by coarse-graining outcomes for $A$ and $B$ and treating $C$ as a measurement-setting moderator, $P_F$ maximally violates the CHSH inequality. To illustrate this, begin with the CHSH inequality \cite{CHSH_Original},
+    \[ \ba{AB|S_A=1, S_B=1} + \ba{AB|S_A=1, S_B=2} + \ba{AB|S_A=2, S_B=1} - \ba{AB|S_A=2, S_B=2} \leq 2 \eq \label{eq:CHSH}\]
+    Where $\ba{AB|S_A=i, S_B=j}$ is the correlation between $A$ and $B$ given the measurement settings for $A$ ($B$) is $i$ ($j$) respectively. Next, each of $C$'s outcomes become the condition settings in \cref{eq:CHSH},
+    \[ \ba{AB|C=2} + \ba{AB|C=3} + \ba{AB|C=4} - \ba{AB|C=1} \leq 2 \]
+    Finally, specifying the correlation between $A$ and $B$ to be defined in terms of a $\bc{1,2,3,4} \rightarrow \bc{\br{1,4}, \br{2,3}}$ coarse-graining,
+    \[ \f{\sqrt{2}}{2} + \f{\sqrt{2}}{2} + \f{\sqrt{2}}{2} - \f{-\sqrt{2}}{2} \leq 2 \]
+    \[ 2\sqrt{2} \leq 2 \]
+    Which corresponds to the maximum quantum violation of the CHSH inequality \cref{eq:CHSH}
+
+    \TODO{Discuss non-uniqueness and relabeling}
+    \section{Infeasibility Certificates}
+    \section{Logical Implications of Non-Contextuality}
+    Following the definition of contextuality given as Definition 2.3 in \cite{Fritz_2011}
+    \begin{definition}
+        The \term{pre-injectable marginal distribution vector} denoted $b_\Pi$ or simply just the \term{marginal distribution vector} is a list of probability values over outcomes of the pre-injectable sets $\Pi$.
+    \end{definition}
+
+    \textbf{Principle assumption:} The probability distribution $P$ over the pre-injectable variables admits a compatible joint distribution over the observable inflated variables.
+    \textbf{Conclusions:} Given a particular event $A \in $
+    \subsection{Logical Implications \& Inequalities}
+    Following the work conducted by Mansfield and Fritz \cite{Mansfield_2012}, we consider a possibilistic implications of the \term{$(1,n)$-type} to be all implications of the form,
+    \[ A \implies C_1 \lor \cdots \lor C_n = \bigvee_{i=1}^{n} C_i \eq \label{eq:1n_pi}\]
+    Where $A$ and each of the $C_i$'s are events or outcomes of a particular set of variables. The letter `$A$' is chosen for the event $A$ since it takes the place of the logical \term{antecedent} of \cref{eq:1n_pi}. Likewise, the letter `$C$' is chosen to represent logical \term{consequents}. The implication \cref{eq:1n_pi} can be read as \textit{whenever $A$ occurs, at least one of the $C_i$'s also occurs}. A particular scenario where \cref{eq:1n_pi} is anticipated to hold true, but is nonetheless violated is called a \term{Hardy paradox}.
+
+    It is possible to turn possibilistic $(1,n)$-type implications into probabilistic inequalities by recognizing that the logical implication of \cref{eq:1n_pi} induces the inequality,
+    \[ \prob{A} \leq \prob{\bigvee_{i=1}^{n} C_i} = \sum_{i=1}^{n} \prob{C_i} - \prob{\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}} \leq \sum_{i=1}^{n} \prob{C_i} \eq \label{eq:1n_ineq} \]
+    Such that whenever the inequality \cref{eq:1n_ineq} is violated, the implication in \cref{eq:1n_pi} is violated as well. Note that the converse is \textit{not} true; if the inequality \cref{eq:1n_ineq} holds true, it is still possible for there to be a violation of \cref{eq:1n_pi}.
+
+    \begin{remark}
+        Notice that the $\prob{C \wedge C} \defined \prob{\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}}$ term in \cref{eq:1n_ineq} can be read as \textit{the probability that at least two of events in $C$ occurred}. It is omitted from \cref{eq:1n_ineq} due to it's non-negativity $\prob{C \wedge C} \geq 0$. However it is possible that $\prob{C \wedge C}$ vanishes exactly if the elements of $C$ are pair-wise mutually exclusive such that $\prob{C_i \wedge C_j} = 0, \forall i,j \in 1, \ldots, n$.
+    \end{remark}
+
     \subsection{Tautologies of The Marginal Problem}
     \section{Hardy Transversals}
     \section{Deriving Symmetric Inequalities}
+    \section{Non-linear Optimizations}
     \section{Results}
     \section{Conclusions}
+    \section{Open Questions \& Future Work}
     \appendix
     \section{Computationally Efficient Parametrization of the Unitary Group}
     Spengler, Huber and Hiesmayr \cite{Spengler_2010_Unitary} suggest the parameterization of the unitary group $\mathcal{U}\br{d}$ using a $d\times d$-matrix of real-valued parameters $\lambda_{n, m}$
-
     \[ U = \bs{\prod_{m=1}^{d-1} \br{\prod_{n=m+1}^{d} \exp\br{i P_n \lambda_{n,m}}\exp\br{i \si_{m,n} \lambda_{m,n}}}} \cdot \bs{\prod_{l=1}^{d} \exp\br{iP_l \lambda_{l,l}}}  \eq \label{eq:spengler_unitary} \]
-
     Where $P_l$ are one-dimensional projective operators,
     \[ P_l = \ket{l}\bra{l} \eq \label{eq:projective_operator} \]
     and the $\si_{m,n}$ are generalized anti-symmetric $\si$-matrices,
     \[ \sigma_{m,n} = -i \ket{m}\bra{n} +i \ket{n}\bra{m} \]
     Where $1 \leq m < n \leq d$.
-
-    For the sake of reference, let us label the matrix exponential terms in \eqref{eq:spengler_unitary} in a manner that corresponds to their affect on a orthonormal basis $\bc{\ket{1}, \ldots, \ket{d}}$.
-
+    For the sake of reference, let us label the matrix exponential terms in \cref{eq:spengler_unitary} in a manner that corresponds to their affect on a orthonormal basis $\bc{\ket{1}, \ldots, \ket{d}}$.
     \begin{align}
     \begin{split}
         GP_l &= \exp\br{iP_l \lambda_{l,l}} \\
@@ -47,8 +357,7 @@
         R_{n,m} &= \exp\br{i \si_{m,n} \lambda_{m,n}}
     \end{split} \eq \label{eq:exp_terms}
     \end{align}
-
-    It is possible to remove the reliance on matrix exponential operations in \eqref{eq:spengler_unitary} by utilizing the explicit form of the exponential terms in \eqref{eq:exp_terms}. As a first step, recognize the defining property of the projective operators \eqref{eq:projective_operator},
+    It is possible to remove the reliance on matrix exponential operations in \cref{eq:spengler_unitary} by utilizing the explicit form of the exponential terms in \cref{eq:exp_terms}. As a first step, recognize the defining property of the projective operators \cref{eq:projective_operator},
     \[ P_l^k = \br{\ket{l}\bra{l}}^k = \ket{l}\bra{l} = P_l \]
     This greatly simplifies the global phase terms $GP_l$,
     \[ GP_l = \exp\br{iP_l \lambda_{l,l}} = \sum_{k=0}^{\inf} \f{\br{iP_l \lambda_{l,l}}^k}{k!} = \mathbb{I} + \sum_{k=1}^{\inf} \f{\br{i \lambda_{l,l}}^k}{k!}P_l^k = \mathbb{I} + P_l \bs{\sum_{k=1}^{\inf} \f{\br{i \lambda_{l,l}}^k}{k!}} = \mathbb{I} + P_l \br{e^{i \lambda_{l,l}} - 1} \]
@@ -65,12 +374,12 @@
     Revealing the simplified form of $R_{n,m}$,
     \[ R_{n,m} = \mathbb{I} + \br{\ket{m}\bra{m} + \ket{n}\bra{n}} \sum_{j=1}^{\inf} \br{-1}^j\f{\lambda_{n,m}^{2j}}{\br{2j}!} + \br{\ket{m}\bra{n} - \ket{n}\bra{m}} \sum_{j=0}^{\inf} \br{-1}^j\f{\lambda_{n,m}^{2j+1}}{\br{2j+1}!} \]
     \[ R_{n,m} = \mathbb{I} + \br{\ket{m}\bra{m} + \ket{n}\bra{n}} \br{\cos\lambda_{n,m} - 1} + \br{\ket{m}\bra{n} - \ket{n}\bra{m}} \sin\lambda_{n,m} \]
-
     \TODO{Explanation of Computational Complexity $\mathcal{O}\br{d^3}$ vs. $\mathcal{O}\br{1}$ using \cite{Moler_2003}}
-    \TODO{Pre-Caching for Fixed Dimension $d$}
+    \TODO{Pre-Caching for Fixed dimension $d$}
 
     \section{Parametrization of Quantum States \& Measurements}
 
-    \nocite{apsrev41Control}
+    % \nocite{REVTEX41Control}
+    % \nocite{apsrev41Control}
     \bibliography{references, revtex-custom-bib}
 \end{document}
