@@ -36,7 +36,7 @@
 
 \newcommand{\term}[1]{\textcolor{Mahogany}{\textbf{#1}}}
 \newcommand{\outc}[1]{o\!\bs{#1}}
-\newcommand{\prob}[2][]{\ifthenelse{\equal{#1}{}}{P}{P_{#1}}\!\br{#2}}
+\DeclareDocumentCommand{\prob}{O{} O{}}{\ifthenelse{\equal{#1}{}}{P}{P_{#1}}\ifthenelse{\equal{#2}{}}{}{\!\br{#2}}}
 
 \usepackage{kbordermatrix}
 \renewcommand{\kbldelim}{(}% Left delimiter
@@ -151,19 +151,6 @@
 
     \TODO{How many definitions do I need to write??}
 
-    \section{Summary of the Inflation Technique}
-    The causal inflation technique, first pioneered by Wolfe, Spekkens, and Fritz \cite{Inflation} and inspired by the \textit{do calculus} and \textit{twin networks} of Ref. \cite{Pearl_2009}, is a family of causal inference techniques that can be used to determine if a probability distribution is compatible or incompatible with a given causal structure. As a preliminary summary, the inflation technique begins by \textit{augmenting} a causal structure with additional nodes, called the inflated causal structure, and then exposes how causal inference tasks on the inflated causal structure can be used to make inferences on the original causal structure. Equipped with the common graph-theoretic terminology and notation of \cref{def:graph_terms}, an inflation can be formally defined as follows:
-    \begin{definition}
-        An \term{inflation} of a causal structure $\graph$ is another causal structure $\graph'$ such that:
-        \[ \forall n' \in \nodes' : \AnSub[\graph']{n'} \sim \AnSub[\graph]{n} \]
-        Where `$\sim$' is notation for equivalence up to removal of the copy-index. To clarify, each node in an inflated causal structure $n' \in \nodes'$ shares a \textit{label} assigned to a node $n \in \nodes$ in the original causal structure together with an additional index called the \term{copy-index}.
-    \end{definition}
-    \TODO{Clean up what is meant by copy index, example maybe?}
-    \TODO{Define injectable sets}
-    \TODO{Define pre-injectable sets and then it's connection to probabilities}
-    \TODO{Define pre-injectable sets}
-    \TODO{State the main Compatibility lemma of inflation}
-    \section{Compatibility, Contextuality and the Marginal Problem}
     \section{Triangle Scenario}
 
     \definecolor{obs_outline}{RGB}{51,157,215}
@@ -285,13 +272,39 @@
 
 
     Figure 2 in \cite{Fritz_2011}
+    \section{Summary of the Inflation Technique}
+    The causal inflation technique, first pioneered by Wolfe, Spekkens, and Fritz \cite{Inflation} and inspired by the \textit{do calculus} and \textit{twin networks} of Ref. \cite{Pearl_2009}, is a family of causal inference techniques that can be used to determine if a probability distribution is compatible or incompatible with a given causal structure. As a preliminary summary, the inflation technique begins by \textit{augmenting} a causal structure with additional nodes, called the inflated causal structure, and then exposes how causal inference tasks on the inflated causal structure can be used to make inferences on the original causal structure. Equipped with the common graph-theoretic terminology and notation of \cref{def:graph_terms}, an inflation can be formally defined as follows:
+    \begin{definition}
+        An \term{inflation} of a causal structure $\graph$ is another causal structure $\graph'$ such that:
+        \[ \forall n' \in \nodes' : \AnSub[\graph']{n'} \sim \AnSub[\graph]{n} \]
+        Where `$\sim$' is notation for equivalence up to removal of the copy-index. To clarify, each node in an inflated causal structure $n' \in \nodes'$ shares a \textit{label} assigned to a node $n \in \nodes$ in the original causal structure together with an additional index called the \term{copy-index}.
+    \end{definition}
+    \begin{definition}
+        A set of \term{causal parameters} for a particular causal structure $\graph$ is the specification of a conditional distribution for every node $v \in \nodes$ given it's parents in $\graph$.
+        \[ \bc{\prob[v \mid \Pa[\graph]{v}] \mid v \in \nodes} \]
+    \end{definition}
+    \TODO{Clean up what is meant by copy index, example maybe?}
+    \TODO{Define injectable sets}
+    \TODO{Define pre-injectable sets and then it's connection to probabilities}
+    \TODO{Define pre-injectable sets}
+    \TODO{State the main Compatibility lemma of inflation}
+    \section{Compatibility, Contextuality and the Marginal Problem}
+    In order to determine if a given marginal distribution $\prob[V]$ or set of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ is compatible with a causal structure $\graph$, one should first formalize what is meant by \textit{compatible}.
+    \begin{definition}
+        A marginal distribution $\prob[V]$ is \term{compatible} with a causal structure $\graph$ (where is assumed that $V \subseteq \nodes_O$) if there exists a \textit{choice} of causal parameters $\bc{\prob[v \mid \Pa[\graph]{v}] \mid v \in \nodes}$ such that $\prob[V]$ can be obtained from the following operations: First obtain the
+    \end{definition}
+    Given a causal structure $\graph = \br{\nodes, \edges}$ together with set of marginal distributions over various subsets of $\nodes$,
+    \TODO{Discuss Compatibility, connection to cooperative games/resources, bell incompatibility?}
+    \TODO{Connection between contextuality and Compatibility via the marginal problem for causal parameters}
+    \TODO{Discuss what is meant by a `complete' solution to the marginal problem}
+    \TODO{Maybe define the possibilistic marginal problem for later}
     \section{The Fritz Distribution}
     The \textbf{Fritz distribution} $P_F$ is a quantum-accessible distribution known to be incompatible with the triangle scenario. Explicitly, $P_F$ is a three-party ($A,B,C$), four-outcome ($1,2,3,4$) distribution that has form as follows:
     \begin{align*}
-    \prob[F]{111} = \prob[F]{221} = \prob[F]{412} = \prob[F]{322} = \prob[F]{233} = \prob[F]{143} = \prob[F]{344} = \prob[F]{434} &= \f{1}{32}\br{2 + \sqrt{2}} \\
-    \prob[F]{121} = \prob[F]{211} = \prob[F]{422} = \prob[F]{312} = \prob[F]{243} = \prob[F]{133} = \prob[F]{334} = \prob[F]{444} &= \f{1}{32}\br{2 - \sqrt{2}}
+    \prob[F][111] = \prob[F][221] = \prob[F][412] = \prob[F][322] = \prob[F][233] = \prob[F][143] = \prob[F][344] = \prob[F][434] &= \f{1}{32}\br{2 + \sqrt{2}} \\
+    \prob[F][121] = \prob[F][211] = \prob[F][422] = \prob[F][312] = \prob[F][243] = \prob[F][133] = \prob[F][334] = \prob[F][444] &= \f{1}{32}\br{2 - \sqrt{2}}
     \end{align*}
-    Here the notation $\prob[F]{abc} = P_{ABC}\br{abc} = \prob{A=a,B=b,C=c}$ is used. The Fritz distribution $P_F$ can be realized with the following quantum configuration:
+    Here the notation $\prob[F][abc] = P_{ABC}\br{abc} = \prob{A=a,B=b,C=c}$ is used. The Fritz distribution $P_F$ can be realized with the following quantum configuration:
     \begin{gather*}
     \rho_{AB} = \ket{\Psi^+}\bra{\Psi^+} \quad \rho_{BC} = \rho_{CA} = \ket{\Phi^+}\bra{\Phi^+} \\
     M_{A} = \bc{\ket{0\psi_0}\bra{0\psi_0}, \ket{0\psi_{\pi}}\bra{0\psi_{\pi}}, \ket{1\psi_{-\pi/2}}\bra{1\psi_{-\pi/2}}, \ket{1\psi_{\pi/2}}\bra{1\psi_{\pi/2}}} \\
@@ -311,7 +324,11 @@
     Which corresponds to the maximum quantum violation of the CHSH inequality \cref{eq:CHSH}
 
     \TODO{Discuss non-uniqueness and relabeling}
+    \TODO{Summarize Problem 2.17 in fritz BBT, make it more formal}
     \section{Infeasibility Certificates}
+    \TODO{The Primal and dual problems associated with the linear program for the marginal problem}
+    \TODO{Infeasibility Certificates and inequalities}
+    \TODO{Discuss Infeasibility Certificates basis}
     \section{Logical Implications of Non-Contextuality}
     Following the definition of contextuality given as Definition 2.3 in \cite{Fritz_2011}
     \begin{definition}
@@ -333,13 +350,45 @@
         Notice that the $\prob{C \wedge C} \defined \prob{\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}}$ term in \cref{eq:1n_ineq} can be read as \textit{the probability that at least two of events in $C$ occurred}. It is omitted from \cref{eq:1n_ineq} due to it's non-negativity $\prob{C \wedge C} \geq 0$. However it is possible that $\prob{C \wedge C}$ vanishes exactly if the elements of $C$ are pair-wise mutually exclusive such that $\prob{C_i \wedge C_j} = 0, \forall i,j \in 1, \ldots, n$.
     \end{remark}
 
-    \subsection{Tautologies of The Marginal Problem}
-    \section{Hardy Transversals}
+    \TODO{Discuss how these implications arise in the marginal problem}
+    \TODO{Mention sufficient solution to the possibilistic marginal problem}
+    \TODO{Illustrate how it can distinguish more than possibilistic differences}
+    \TODO{Discuss $(m,n)-type$ implications and the non-triviality}
+    \TODO{Link to logical bell inequalities/completeness or not?}
+
+    \section{Hypergraph Transversals}
+    \TODO{Convince one how marginal implications are a hypergraph transversal or covering problem}
+    \TODO{Existing algorithms}
+    \TODO{Discuss the Inequalities Derived/ Trivial and non-trivial}
+    \TODO{Weighted transversals and Optimizations}
+    \TODO{Seeding inequalities (huge advantage here)}
     \section{Deriving Symmetric Inequalities}
+    \TODO{Identify the desired symmetry group}
+    \TODO{How we obtained the desired symmetry group}
+    \TODO{Group orbits to symmetric marginal description matrix}
+    \TODO{Infeasibility on symmetric marginal problem}
+    \TODO{Hardy Transversals can't work on the symmetric marginal problem}
+    \TODO{Symmetrizing non-symmetric inequalities through avoiding orbits}
+    \TODO{higher order transversals on mutually impossible events}
     \section{Non-linear Optimizations}
-    \section{Results}
+    \TODO{Why Inequalities are great for optimizations}
+    \TODO{Non-linearity}
+    \TODO{Techniques Used}
+    \TODO{Finding maximum violation of CHSH easily}
+    \TODO{Unreliance when number of parameters increases}
+    \TODO{Issues with local minimum}
+    \TODO{Using initial conditions close to fritz, obtain greater violation}
+    \TODO{Greater violation shares possibilistic structure of fritz and violates CHSH under definition}
+    \TODO{Not realizable with maximally entangled qubit states}
+    \TODO{Not realizable with separable measurements}
+    \TODO{Many non-trivial inequalities to be tested}
+    \TODO{inequality -> dist -> inequality evolution}
     \section{Conclusions}
+    \TODO{Inflation technique allows one to witness fritz incompatibility}
+    \TODO{Linear optimization induces certificates which are incompatibility witnesses}
+    \TODO{There are quantum distributions in the triangle scenario that are incompatible and different from fritz in terms of entanglement but not possibilistic structure}
     \section{Open Questions \& Future Work}
+    \TODO{Lots of stuff}
     \appendix
     \section{Computationally Efficient Parametrization of the Unitary Group}
     Spengler, Huber and Hiesmayr \cite{Spengler_2010_Unitary} suggest the parameterization of the unitary group $\mathcal{U}\br{d}$ using a $d\times d$-matrix of real-valued parameters $\lambda_{n, m}$
