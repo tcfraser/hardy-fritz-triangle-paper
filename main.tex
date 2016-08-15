@@ -37,6 +37,7 @@
 \newcommand{\term}[1]{\textcolor{Mahogany}{\textbf{#1}}}
 \newcommand{\outc}[1]{o\!\bs{#1}}
 \DeclareDocumentCommand{\prob}{O{} O{}}{\ifthenelse{\equal{#1}{}}{P}{P_{#1}}\ifthenelse{\equal{#2}{}}{}{\!\br{#2}}}
+\DeclareDocumentCommand{\probvec}{O{} O{}}{\ifthenelse{\equal{#1}{}}{\mathcal{P}}{\mathcal{P}_{#1}}\ifthenelse{\equal{#2}{}}{}{\!\br{#2}}}
 
 \usepackage{kbordermatrix}
 \renewcommand{\kbldelim}{(}% Left delimiter
@@ -280,8 +281,8 @@
         Where `$\sim$' is notation for equivalence up to removal of the copy-index. To clarify, each node in an inflated causal structure $n' \in \nodes'$ shares a \textit{label} assigned to a node $n \in \nodes$ in the original causal structure together with an additional index called the \term{copy-index}.
     \end{definition}
     \begin{definition}
-        A set of \term{causal parameters} for a particular causal structure $\graph$ is the specification of a conditional distribution for every node $v \in \nodes$ given it's parents in $\graph$.
-        \[ \bc{\prob[v \mid \Pa[\graph]{v}] \mid v \in \nodes} \]
+        A set of \term{causal parameters} for a particular causal structure $\graph$ is the specification of a conditional distribution for every node $n \in \nodes$ given it's parents in $\graph$.
+        \[ \bc{\prob[n \mid \Pa[\graph]{n}] \mid n \in \nodes} \]
     \end{definition}
     \TODO{Clean up what is meant by copy index, example maybe?}
     \TODO{Define injectable sets}
@@ -291,9 +292,33 @@
     \section{Compatibility, Contextuality and the Marginal Problem}
     In order to determine if a given marginal distribution $\prob[V]$ or set of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ is compatible with a causal structure $\graph$, one should first formalize what is meant by \textit{compatible}.
     \begin{definition}
-        A marginal distribution $\prob[V]$ is \term{compatible} with a causal structure $\graph$ (where is assumed that $V \subseteq \nodes_O$) if there exists a \textit{choice} of causal parameters $\bc{\prob[v \mid \Pa[\graph]{v}] \mid v \in \nodes}$ such that $\prob[V]$ can be obtained from the following operations: First obtain the
+        \label{def:compatible}
+        A marginal distribution $\prob[V]$ is \term{compatible} with a causal structure $\graph$ (where it is assumed that $V \subseteq \nodes_O$) if there exists a \textit{choice} of causal parameters $\bc{\prob[n \mid \Pa[\graph]{n}] \mid n \in \nodes}$ such that $\prob[V]$ can be \textit{recovered} from the following series of operations:
+
+        \TODO{Define this notation here}
+        \begin{enumerate}
+            \item First obtain a joint distribution over \textit{all} nodes of of the causal structure,
+            \[ \prob[\nodes] = \prod_{n \in \nodes} \prob[n \mid \Pa[\graph]{n}] \]
+            \item Then marginalize over the latent nodes of $\graph$,
+            \[ \prob[\nodes_O] = \sum_{\nodes_L} \prob[\nodes] \]
+            \item Finally marginalize over the observed nodes not in $V$ to obtain $\prob[V]$,
+            \[ \prob[V] = \sum_{\nodes_O \setminus V} \prob[\nodes_O] \]
+        \end{enumerate}
+        A set of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ is compatible with $\graph$ if each of the distributions can be made compatible by the \textit{same} choice of causal parameters.
+        A distribution $\prob[V]$ or set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ is said to be \term{incompatible} with a causal structure if there \textit{does not exist} a set of causal parameters with the above mentioned property.
+
+        \TODO{Source this?}
     \end{definition}
-    Given a causal structure $\graph = \br{\nodes, \edges}$ together with set of marginal distributions over various subsets of $\nodes$,
+
+    Operations 2 and 3 of \cref{def:compatible} are related to the \textit{marginal problem}.
+    \begin{definition}
+        \label{def:marginal_problem}
+        \term{The Marginal Problem:} Given a set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ where $V_i \subseteq \mathcal{V}$ for some set of random variables $\mathcal{V}$, does there exist a joint distribution $\prob[\mathcal{V}]$ such that each given distribution $\prob[V_i]$ can be obtained from marginalizing $\prob[\mathcal{V}]$?
+        \[ \forall i \in \bc{1, \ldots, k} : \prob[V_i] = \sum_{\mathcal{V} \setminus V_i} \prob[\mathcal{V}] \]
+        Typically (although not strictly necessary), $\mathcal{V}$ is taken to mean the union of all $V_i$'s.
+        \[ \mathcal{V} = V_1 \cup \cdots V_k = \bigcup_{i=1}^{k} V_i \eq \label{eq:marginals_union} \]
+    \end{definition}
+
     \TODO{Discuss Compatibility, connection to cooperative games/resources, bell incompatibility?}
     \TODO{Connection between contextuality and Compatibility via the marginal problem for causal parameters}
     \TODO{Discuss what is meant by a `complete' solution to the marginal problem}
@@ -304,7 +329,7 @@
     \prob[F][111] = \prob[F][221] = \prob[F][412] = \prob[F][322] = \prob[F][233] = \prob[F][143] = \prob[F][344] = \prob[F][434] &= \f{1}{32}\br{2 + \sqrt{2}} \\
     \prob[F][121] = \prob[F][211] = \prob[F][422] = \prob[F][312] = \prob[F][243] = \prob[F][133] = \prob[F][334] = \prob[F][444] &= \f{1}{32}\br{2 - \sqrt{2}}
     \end{align*}
-    Here the notation $\prob[F][abc] = P_{ABC}\br{abc} = \prob{A=a,B=b,C=c}$ is used. The Fritz distribution $P_F$ can be realized with the following quantum configuration:
+    Here the notation $\prob[F][abc] = \prob[ABC][abc] = \prob[][A=a,B=b,C=c]$ is used. The Fritz distribution $\prob[F]$ can be realized with the following quantum configuration:
     \begin{gather*}
     \rho_{AB} = \ket{\Psi^+}\bra{\Psi^+} \quad \rho_{BC} = \rho_{CA} = \ket{\Phi^+}\bra{\Phi^+} \\
     M_{A} = \bc{\ket{0\psi_0}\bra{0\psi_0}, \ket{0\psi_{\pi}}\bra{0\psi_{\pi}}, \ket{1\psi_{-\pi/2}}\bra{1\psi_{-\pi/2}}, \ket{1\psi_{\pi/2}}\bra{1\psi_{\pi/2}}} \\
@@ -326,6 +351,41 @@
     \TODO{Discuss non-uniqueness and relabeling}
     \TODO{Summarize Problem 2.17 in fritz BBT, make it more formal}
     \section{Infeasibility Certificates}
+    \subsection{Casting the Inflated Marginal Problem as a Linear Program}
+    After obtaining the maximal pre-injectable sets associated with a particular inflation, one can write the marginal problem of \cref{def:marginal_problem} as a linear program. The key observation is that marginalization is a \textit{linear} operator that can be performed via a matrix multiplication. To do this, we will define the \textit{marginalization matrix}.
+    \begin{definition}
+        The \term{marginalization matrix} $M$ for a collection random variables $\bc{V_1, \dots, V_k}$ is a bit-wise matrix where the columns are indexed by \textit{joint} outcomes $\outc{\mathcal{V}} \in O_{\mathcal{V}}$ and the rows are indexed by \textit{marginal} outcomes corresponding to all outcomes $\outc{V_i} \in O_{V_i}$ of the \textit{individual} subsets $V_i$. Here, $\mathcal{V}$ is the union of all random variables exactly as in \cref{eq:marginals_union}. The entires of $M$ are populated whenever a row index is extendable to a column index.
+        \[ M_{\br{o\bs{V_i}, o\bs{\mathcal{V}}}} = \begin{cases}
+            1 & \outc{V_i} \subseteq \outc{\mathcal{V}} \\
+            0 & \text{otherwise}
+        \end{cases} \]
+        The marginalization matrix has $\abs{O_\mathcal{V}}$ columns and $\sum_{i=1}^{k} \abs{O_{V_i}}$ rows. Note that the row and column indices of the marginalization matrix will be referred to very frequently. We will refer to the
+    \end{definition}
+
+    To illustrate this concretely, consider the following example:
+    \begin{example}
+        Suppose one has $4$ binary random variables $\mathcal{V} = \bc{a,b,c}$ in mind and $2$ subsets $\bc{\bc{a,c}, \bc{b}}$. Then the marginalization matrix is:
+        \[ M = \kbordermatrix{
+            (a,b,c) = & (0,0,0) & (0,0,1) & (0,1,0) & (0,1,1) & (1,0,0) & (1,0,1) & (1,1,0) & (1,1,1) \\
+            (a=0, c=0) & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+            (a=0, c=1) & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 \\
+            (a=1, c=0) & 0 & 0 & 0 & 0 & 1 & 0 & 1 & 0 \\
+            (a=1, c=1) & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 1 \\
+            (b=0)      & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 \\
+            (b=1)      & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1
+        } \]
+    \end{example}
+    \TODO{Computationally Efficient generation/}
+
+    In order to describe how marginalization can be written as matrix multiplication $M \cdot x = b$, we need to describe how to define two more quantities:
+
+    \begin{definition}
+        The \term{joint distribution vector} $\probvec[\mathcal{V}]$ for a probability distribution $\prob[\mathcal{V}]$ is the vector whose entries are the positive, real-valued probabilities that $\prob[\mathcal{V}]$ assigns to each outcome of $\outc{\mathcal{V}}$ of $O_\mathcal{V}$. $\probvec[\mathcal{V}]$ shares the same indices as the \textit{column} indices of $M$.
+        \[ \probvec[\mathcal{V}] = \pmtrx{1 & 4} \]
+    \end{definition}
+
+
+
     \TODO{The Primal and dual problems associated with the linear program for the marginal problem}
     \TODO{Infeasibility Certificates and inequalities}
     \TODO{Discuss Infeasibility Certificates basis}
@@ -343,11 +403,11 @@
     Where $A$ and each of the $C_i$'s are events or outcomes of a particular set of variables. The letter `$A$' is chosen for the event $A$ since it takes the place of the logical \term{antecedent} of \cref{eq:1n_pi}. Likewise, the letter `$C$' is chosen to represent logical \term{consequents}. The implication \cref{eq:1n_pi} can be read as \textit{whenever $A$ occurs, at least one of the $C_i$'s also occurs}. A particular scenario where \cref{eq:1n_pi} is anticipated to hold true, but is nonetheless violated is called a \term{Hardy paradox}.
 
     It is possible to turn possibilistic $(1,n)$-type implications into probabilistic inequalities by recognizing that the logical implication of \cref{eq:1n_pi} induces the inequality,
-    \[ \prob{A} \leq \prob{\bigvee_{i=1}^{n} C_i} = \sum_{i=1}^{n} \prob{C_i} - \prob{\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}} \leq \sum_{i=1}^{n} \prob{C_i} \eq \label{eq:1n_ineq} \]
+    \[ \prob[][A] \leq \prob[][\bigvee_{i=1}^{n} C_i] = \sum_{i=1}^{n} \prob[][C_i] - \prob[][\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}] \leq \sum_{i=1}^{n} \prob[][C_i] \eq \label{eq:1n_ineq} \]
     Such that whenever the inequality \cref{eq:1n_ineq} is violated, the implication in \cref{eq:1n_pi} is violated as well. Note that the converse is \textit{not} true; if the inequality \cref{eq:1n_ineq} holds true, it is still possible for there to be a violation of \cref{eq:1n_pi}.
 
     \begin{remark}
-        Notice that the $\prob{C \wedge C} \defined \prob{\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}}$ term in \cref{eq:1n_ineq} can be read as \textit{the probability that at least two of events in $C$ occurred}. It is omitted from \cref{eq:1n_ineq} due to it's non-negativity $\prob{C \wedge C} \geq 0$. However it is possible that $\prob{C \wedge C}$ vanishes exactly if the elements of $C$ are pair-wise mutually exclusive such that $\prob{C_i \wedge C_j} = 0, \forall i,j \in 1, \ldots, n$.
+        Notice that the $\prob[][C \wedge C] \defined \prob[][\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}]$ term in \cref{eq:1n_ineq} can be read as \textit{the probability that at least two of events in $C$ occurred}. It is omitted from \cref{eq:1n_ineq} due to it's non-negativity $\prob[][C \wedge C] \geq 0$. However it is possible that $\prob[][C \wedge C]$ vanishes exactly if the elements of $C$ are pair-wise mutually exclusive such that $\prob[][C_i \wedge C_j] = 0, \forall i,j \in 1, \ldots, n$.
     \end{remark}
 
     \TODO{Discuss how these implications arise in the marginal problem}
