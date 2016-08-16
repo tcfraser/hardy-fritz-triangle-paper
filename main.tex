@@ -1,8 +1,13 @@
-\documentclass[aps, 10pt, english, twoside, pra, longbibliography]{revtex4-1}
+\documentclass[aps, 10pt, english, twoside, pra, nofootinbib, longbibliography]{revtex4-1}
 
 \usepackage{shared}
 \usepackage{xparse}
 \usepackage{cleveref}
+
+% === Drafting Declarations ===
+\draftprofile[TC Fraser]{TC}{Red}
+\draftprofile[Elie Wolfe]{E}{Green}
+
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -22,6 +27,8 @@
 \newcommand{\trans}{\mathcal{T}}
 \newcommand{\ind}{\mathcal{I}}
 
+\newcommand{\ancestralindep}{\perp}
+
 \newcommand{\setoperator}[1]{%
 \expandafter\DeclareDocumentCommand\csname#1\endcsname{O{} O{} m}{{\text{#1}_{##1}^{##2}\!}\br{##3}}%
 }
@@ -30,7 +37,6 @@
 \setoperator{Ch}
 \setoperator{An}
 \setoperator{Sub}
-\setoperator{AnSub}
 \setoperator{AnSub}
 % \newcommand{\Pa}[2][]{{\mathsf{Pa}_{#1}\!}\br{#2}}
 
@@ -45,7 +51,7 @@
 % \setlength{\parindent}{0pt}
 
 \begin{document}
-    \title{Triangle Scenario Manuscript Title}
+    \title{Inequalities Witnessing Quantum Incompatibility in The Triangle Scenario}
     \author{Thomas C. Fraser}
     \email{tcfraser@tcfraser.com}
     \affiliation{Perimeter Institute for Theoretical Physics, Waterloo, Ontario, Canada \\ University of Waterloo, Waterloo, Ontario, Canada}
@@ -81,6 +87,12 @@
         Consider two sets of random variables $V = \bc{a, b}$ and $W = \bc{a, b, c}$. Clearly $V \subseteq W$; a prerequisite for extendability. Also take all individual outcome spaces to be finite and of order 3: $O_a = O_b = O_c = \bc{1,2,3}$. Then $\outc{V} = \outc{\bc{a,b}} = \bc{a = 1, b = 2}$ is extendable to the outcome $\outc{W} = \bc{a = 1, b = 2, c = 1}$, and the extendable set of $\outc{V}$ in $O_{W}$ is,
         \[ \outc{V} \times O_{W\setminus V} = \outc{\bc{a,b}} \times O_c = \bc{\bc{a = 1, b = 2, c = 1}, \bc{a = 1, b = 2, c = 2}, \bc{a = 1, b = 2, c = 3}} \]
     \end{example}
+
+    \begin{definition}
+        Two outcomes $\outc{V_1}$ and $\outc{V_2}$ over two distinct sets of random variables $V_1$ and $V_2$ are called \term{accordant} or \textit{compatible} if they are mutually realizable. In terms of extendable sets, $\outc{V_1}$ and $\outc{V_2}$ are accordant if there exists an outcome $\outc{V_1 \cup V_2} \in O_{V_1 \cup V_2}$ such that,
+        \[ \outc{V_1}, \outc{V_2} \subseteq \outc{V_1 \cup V_2}  \]
+        Accordance between two outcomes is the \textit{opposite} of exclusive.
+    \end{definition}
 
     \begin{definition}
         \label{def:graph}
@@ -150,10 +162,49 @@
         \[ \nodes_L \cap \nodes_O = \emptyset \qquad \nodes_L \cup \nodes_O = \nodes \]
     \end{definition}
 
-    \TODO{How many definitions do I need to write??}
+    \todo[TC]{How many definitions do I need to write??}
 
     \section{Triangle Scenario}
+    \todo[TC]{Discuss the triangle scenario, previous work done on it, etc.}
+    Focusing on the inflation depicted in \cref{fig:inflated_triangle_scenario}, we obtained the maximally pre-injectable sets through the procedure outlined in \cite{Inflation}.
+    \begin{equation}
+        \begin{gathered}
+            \textbf{Pre-injectable Sets $\Pi$} \\
+            \bc{A_1, B_1, C_1, A_4, B_4, C_4} \\
+            \bc{A_1, B_2, C_3, A_4, B_3, C_2} \\
+            \bc{A_2, B_3, C_1, A_3, B_2, C_4} \\
+            \bc{A_2, B_4, C_3, A_3, B_1, C_2} \\
+            \bc{A_1, B_3, C_4} \\
+            \bc{A_1, B_4, C_2} \\
+            \bc{A_2, B_1, C_4} \\
+            \bc{A_2, B_2, C_2} \\
+            \bc{A_3, B_3, C_3} \\
+            \bc{A_3, B_4, C_1} \\
+            \bc{A_4, B_1, C_3} \\
+            \bc{A_4, B_2, C_1}
+        \end{gathered}
+        \qquad
+        \begin{gathered}
+            \textbf{Ancestral Independences} \\
+            \bc{A_1, B_1, C_1} \ancestralindep \bc{A_4, B_4, C_4} \\
+            \bc{A_1, B_2, C_3} \ancestralindep \bc{A_4, B_3, C_2} \\
+            \bc{A_2, B_3, C_1} \ancestralindep \bc{A_3, B_2, C_4} \\
+            \bc{A_2, B_4, C_3} \ancestralindep \bc{A_3, B_1, C_2} \\
+            \bc{A_1} \ancestralindep \bc{B_3} \ancestralindep \bc{C_4} \\
+            \bc{A_1} \ancestralindep \bc{B_4} \ancestralindep \bc{C_2} \\
+            \bc{A_2} \ancestralindep \bc{B_1} \ancestralindep \bc{C_4} \\
+            \bc{A_2} \ancestralindep \bc{B_2} \ancestralindep \bc{C_2} \\
+            \bc{A_3} \ancestralindep \bc{B_3} \ancestralindep \bc{C_3} \\
+            \bc{A_3} \ancestralindep \bc{B_4} \ancestralindep \bc{C_1} \\
+            \bc{A_4} \ancestralindep \bc{B_1} \ancestralindep \bc{C_3} \\
+            \bc{A_4} \ancestralindep \bc{B_2} \ancestralindep \bc{C_1}
+        \end{gathered}
+    \end{equation}
+    As can be counted, there are $12$ maximally pre-injectable sets which will be indexed $1$ through $12$ in the order seen above ($\Pi = \bc{\Pi_1, \ldots, \Pi_{12}}$)
 
+    % =========================
+    % Causal Structure Diagrams
+    % =========================
     \definecolor{obs_outline}{RGB}{51,157,215}
     \definecolor{obs_fill}{RGB}{222,253,255}
     \definecolor{obs_text}{RGB}{0,0,0}
@@ -270,11 +321,11 @@
         \end{minipage}
     \end{center}
     \end{figure}
+    % =========================
+    % =========================
 
-
-    Figure 2 in \cite{Fritz_2011}
     \section{Summary of the Inflation Technique}
-    The causal inflation technique, first pioneered by Wolfe, Spekkens, and Fritz \cite{Inflation} and inspired by the \textit{do calculus} and \textit{twin networks} of Ref. \cite{Pearl_2009}, is a family of causal inference techniques that can be used to determine if a probability distribution is compatible or incompatible with a given causal structure. As a preliminary summary, the inflation technique begins by \textit{augmenting} a causal structure with additional nodes, called the inflated causal structure, and then exposes how causal inference tasks on the inflated causal structure can be used to make inferences on the original causal structure. Equipped with the common graph-theoretic terminology and notation of \cref{def:graph_terms}, an inflation can be formally defined as follows:
+    The causal inflation technique, first pioneered by Wolfe, Spekkens, and Fritz \cite{Inflation} and inspired by the \textit{do calculus} and \textit{twin networks} of Ref. \cite{Pearl_2009}, is a family of causal inference techniques that can be used to determine if a probability distribution is compatible or incompatible with a given causal structure. As a preliminary summary, the inflation technique begins by \textit{augmenting} a causal structure with additional nodes, producing the \textit{inflated} causal structure, and then exposes how causal inference tasks on the inflated causal structure can be used to make inferences on the original causal structure. Equipped with the common graph-theoretic terminology and notation of \cref{def:graph_terms}, an inflation can be formally defined as follows:
     \begin{definition}
         An \term{inflation} of a causal structure $\graph$ is another causal structure $\graph'$ such that:
         \[ \forall n' \in \nodes' : \AnSub[\graph']{n'} \sim \AnSub[\graph]{n} \]
@@ -284,18 +335,18 @@
         A set of \term{causal parameters} for a particular causal structure $\graph$ is the specification of a conditional distribution for every node $n \in \nodes$ given it's parents in $\graph$.
         \[ \bc{\prob[n \mid \Pa[\graph]{n}] \mid n \in \nodes} \]
     \end{definition}
-    \TODO{Clean up what is meant by copy index, example maybe?}
-    \TODO{Define injectable sets}
-    \TODO{Define pre-injectable sets and then it's connection to probabilities}
-    \TODO{Define pre-injectable sets}
-    \TODO{State the main Compatibility lemma of inflation}
+    \todo[TC]{Clean up what is meant by copy index, example maybe?}
+    \todo[TC]{Define injectable sets}
+    \todo[TC]{Define pre-injectable sets and then it's connection to probabilities}
+    \todo[TC]{Define pre-injectable sets}
+    \todo[TC]{State the main Compatibility lemma of inflation}
     \section{Compatibility, Contextuality and the Marginal Problem}
     In order to determine if a given marginal distribution $\prob[V]$ or set of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ is compatible with a causal structure $\graph$, one should first formalize what is meant by \textit{compatible}.
     \begin{definition}
         \label{def:compatible}
         A marginal distribution $\prob[V]$ is \term{compatible} with a causal structure $\graph$ (where it is assumed that $V \subseteq \nodes_O$) if there exists a \textit{choice} of causal parameters $\bc{\prob[n \mid \Pa[\graph]{n}] \mid n \in \nodes}$ such that $\prob[V]$ can be \textit{recovered} from the following series of operations:
 
-        \TODO{Define this notation here}
+        \todo[TC]{Define this notation here}
         \begin{enumerate}
             \item First obtain a joint distribution over \textit{all} nodes of of the causal structure,
             \[ \prob[\nodes] = \prod_{n \in \nodes} \prob[n \mid \Pa[\graph]{n}] \]
@@ -307,22 +358,22 @@
         A set of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ is compatible with $\graph$ if each of the distributions can be made compatible by the \textit{same} choice of causal parameters.
         A distribution $\prob[V]$ or set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ is said to be \term{incompatible} with a causal structure if there \textit{does not exist} a set of causal parameters with the above mentioned property.
 
-        \TODO{Source this?}
+        \todo[TC]{Source this?}
     \end{definition}
 
     Operations 2 and 3 of \cref{def:compatible} are related to the \textit{marginal problem}.
     \begin{definition}
         \label{def:marginal_problem}
-        \term{The Marginal Problem:} Given a set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ where $V_i \subseteq \mathcal{V}$ for some set of random variables $\mathcal{V}$, does there exist a joint distribution $\prob[\mathcal{V}]$ such that each given distribution $\prob[V_i]$ can be obtained from marginalizing $\prob[\mathcal{V}]$?
+        \term{The Marginal Problem:} Given a set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ where $V_i \subseteq \mathcal{V}$ for some set of random variables $\mathcal{V}$ and $k \geq 2$, does there exist a joint distribution $\prob[\mathcal{V}]$ such that each given distribution $\prob[V_i]$ can be obtained from marginalizing $\prob[\mathcal{V}]$?
         \[ \forall i \in \bc{1, \ldots, k} : \prob[V_i] = \sum_{\mathcal{V} \setminus V_i} \prob[\mathcal{V}] \]
         Typically (although not strictly necessary), $\mathcal{V}$ is taken to mean the union of all $V_i$'s.
         \[ \mathcal{V} = V_1 \cup \cdots V_k = \bigcup_{i=1}^{k} V_i \eq \label{eq:marginals_union} \]
     \end{definition}
 
-    \TODO{Discuss Compatibility, connection to cooperative games/resources, bell incompatibility?}
-    \TODO{Connection between contextuality and Compatibility via the marginal problem for causal parameters}
-    \TODO{Discuss what is meant by a `complete' solution to the marginal problem}
-    \TODO{Maybe define the possibilistic marginal problem for later}
+    \todo[TC]{Discuss Compatibility, connection to cooperative games/resources, bell incompatibility?}
+    \todo[TC]{Connection between contextuality and Compatibility via the marginal problem for causal parameters}
+    \todo[TC]{Discuss what is meant by a `complete' solution to the marginal problem}
+    \todo[TC]{Maybe define the possibilistic marginal problem for later}
     \section{The Fritz Distribution}
     The \textbf{Fritz distribution} $P_F$ is a quantum-accessible distribution known to be incompatible with the triangle scenario. Explicitly, $P_F$ is a three-party ($A,B,C$), four-outcome ($1,2,3,4$) distribution that has form as follows:
     \begin{align*}
@@ -348,19 +399,24 @@
     \[ 2\sqrt{2} \leq 2 \]
     Which corresponds to the maximum quantum violation of the CHSH inequality \cref{eq:CHSH}
 
-    \TODO{Discuss non-uniqueness and relabeling}
-    \TODO{Summarize Problem 2.17 in fritz BBT, make it more formal}
-    \section{Infeasibility Certificates}
+    \todo[TC]{Discuss non-uniqueness and relabeling}
+    \todo[TC]{Summarize Problem 2.17 in fritz BBT, make it more formal}
+    \section{Certificate Inequalities}
     \subsection{Casting the Inflated Marginal Problem as a Linear Program}
     After obtaining the maximal pre-injectable sets associated with a particular inflation, one can write the marginal problem of \cref{def:marginal_problem} as a linear program. The key observation is that marginalization is a \textit{linear} operator that can be performed via a matrix multiplication. To do this, we will define the \textit{marginalization matrix}.
     \begin{definition}
-        The \term{marginalization matrix} $M$ for a collection random variables $\bc{V_1, \dots, V_k}$ is a bit-wise matrix where the columns are indexed by \textit{joint} outcomes $\outc{\mathcal{V}} \in O_{\mathcal{V}}$ and the rows are indexed by \textit{marginal} outcomes corresponding to all outcomes $\outc{V_i} \in O_{V_i}$ of the \textit{individual} subsets $V_i$. Here, $\mathcal{V}$ is the union of all random variables exactly as in \cref{eq:marginals_union}. The entires of $M$ are populated whenever a row index is extendable to a column index.
+        The \term{marginalization matrix} $M$ for a collection random variables $\bc{V_1, \dots, V_k}$ is a bit-wise matrix where the columns are indexed by \textit{joint} outcomes $\outc{\mathcal{V}} \in O_{\mathcal{V}}$ and the rows are indexed by \textit{marginal} outcomes corresponding to all outcomes $\outc{V_i} \in O_{V_i}$ of the \textit{individual} subsets $V_i$. Here, $\mathcal{V}$ is the union of all random variables exactly as in \cref{eq:marginals_union}. The entries of $M$ are populated whenever a row index is extendable to a column index.
         \[ M_{\br{o\bs{V_i}, o\bs{\mathcal{V}}}} = \begin{cases}
             1 & \outc{V_i} \subseteq \outc{\mathcal{V}} \\
             0 & \text{otherwise}
         \end{cases} \]
-        The marginalization matrix has $\abs{O_\mathcal{V}}$ columns and $\sum_{i=1}^{k} \abs{O_{V_i}}$ rows. Note that the row and column indices of the marginalization matrix will be referred to very frequently. We will refer to the
+        The marginalization matrix has $\abs{O_\mathcal{V}}$ columns and $\sum_{i=1}^{k} \abs{O_{V_i}}$ rows. The number of non-zero entries of $M$ is a simple expression,
+        \[ \sum_{i=1}^{k} \abs{O_{V_i}}\abs{O_{\mathcal{V} \setminus V_i}} = \sum_{i=1}^{k} \abs{O_{\mathcal{V}}} = k\abs{O_{\mathcal{V}}} \]
+        Each of the $k$ elements of $\bc{V_1, \ldots, V_k}$ contributes a single non-zero entry to each column of $M$, resulting in $k\abs{O_\mathcal{V}}$ total non-zero entries.
+
+        Note that the row and column indices of the marginalization matrix will be referred to very frequently. We will refer to the
     \end{definition}
+    \todo[TC]{Computationally Efficient generation?}
 
     To illustrate this concretely, consider the following example:
     \begin{example}
@@ -375,80 +431,137 @@
             (b=1)      & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1
         } \]
     \end{example}
-    \TODO{Computationally Efficient generation/}
 
     In order to describe how marginalization can be written as matrix multiplication $M \cdot x = b$, we need to describe how to define two more quantities:
 
     \begin{definition}
         The \term{joint distribution vector} $\probvec[\mathcal{V}]$ for a probability distribution $\prob[\mathcal{V}]$ is the vector whose entries are the positive, real-valued probabilities that $\prob[\mathcal{V}]$ assigns to each outcome of $\outc{\mathcal{V}}$ of $O_\mathcal{V}$. $\probvec[\mathcal{V}]$ shares the same indices as the \textit{column} indices of $M$.
-        \[ \probvec[\mathcal{V}] = \pmtrx{1 & 4} \]
+        \[ \probvec[\mathcal{V}]^\intercal = \bs{\prob[\mathcal{V}][\outc{\mathcal{V}}] \mid \outc{\mathcal{V}} \in O_{\mathcal{V}}} \]
     \end{definition}
+    \begin{definition}
+        The \term{marginal distribution vector} $\probvec[\bc{V_1, \ldots, V_k}]$ for a set of probability distributions $\bc{P_{V_1}, \ldots, P_{V_k}}$ is the vector whose entries are probabilities over the set of \term{marginal outcomes} $\bigcup_{j=1}^{k} O_{V_j}$. $\probvec[\bc{V_1, \ldots, V_k}]$ shares the same indices as the \textit{row} indices of $M$.
+        \[ \probvec[\bc{V_1, \ldots, V_k}]^\intercal = \bs{\prob[V_i][\outc{V_i}] \mid \outc{V_i} \in \bigcup_{j=1}^{k} O_{V_j}} \]
+    \end{definition}
+    The marginal and joint distribution vectors are related via the marginalization matrix $M$. Given a joint distribution vector $\probvec[\mathcal{V}]$ one can obtain the marginal distribution vector $\probvec[\bc{V_1, \ldots, V_k}]$ by multiplying $M$ by $\probvec[\mathcal{V}]$.
+    \[ \probvec[\bc{V_1, \ldots, V_k}] = M \cdot \probvec[\mathcal{V}] \eq \label{eq:marginal_problem_matrix} \]
+    \todo[TC]{Discuss non-unique but consistent ordering of $M$, $\probvec[\mathcal{V}]$ and $\probvec[\bc{V_1, \ldots, V_k}]$}
 
+    The marginal problem can now be rephrased in the language of the marginalization matrix. Suppose one obtains a marginal distribution vector $\probvec[\bc{V_1, \ldots, V_k}]$. The marginal problem becomes equivalent to the question: \textit{Does there exist a joint distribution vector $\probvec[\mathcal{V}]$ such that \cref{eq:marginal_problem_matrix} holds?}
 
+    \begin{definition}
+        \label{def:marginal_linear_program}
+        \term{The Marginal Linear Program} is the following linear program:
+        \begin{alignat*}{2}
+            & \text{minimize:} \quad&& \emptyset \cdot x\\
+            & \text{subject to:} && x \succeq 0 \\
+            & && M \cdot x = \probvec[\bc{V_1, \ldots, V_k}]
+        \end{alignat*}
+        If this ``optimization''\footnote{``Optimization'' is presented in quotes here because the minimization objective is trivially always zero ($\emptyset$ denotes the null vector of all zero entries). The primal value of the linear program is of no interest, all that matters is its \textit{feasibility}.} is \textit{feasible}, then there exists a vector $x$ than can satisfy \cref{eq:marginal_problem_matrix} and is a valid joint distribution vector. Therefore feasibility implies that $\prob[\mathcal{V}] = x$, solving the marginal problem with positive result. Moreover if the marginal linear program is \textit{infeasible}, then there \textit{does not} exist a joint distribution $\prob[\mathcal{V}]$ over all random variables.
+    \end{definition}
+    \begin{definition}
+        \label{def:dual_marginal_linear_program}
+        \term{The Dual Marginal Linear Program} is the dual of \cref{def:marginal_linear_program} formulated via a procedure similar to \cite{Lahaie_2008}:
+        \begin{alignat*}{2}
+            & \text{minimize:} \quad&& y \cdot \probvec[\bc{V_1, \ldots, V_k}]\\
+            & \text{subject to:} && y \cdot M \succeq 0
+        \end{alignat*}
+        Where $y$ is a real valued vector with the same length as $\probvec[\bc{V_1, \ldots, V_k}]$.
+    \end{definition}
+    \subsection{Infeasibility Certificates}
+    The dual marginal linear program also provides an answer to the marginal problem. To prove this, first notice that the dual problem is \textit{never infeasible}; by choosing $y$ to be trivially the null vector $\emptyset$ of appropriate size, all constraints are satisfied. Secondly if $y \cdot M \succeq 0$ and $x \succeq 0$, then the following must hold if the primal is feasible:
+    \[ y \cdot \probvec[\bc{V_1, \ldots, V_k}] =  y \cdot M \cdot x \geq 0 \eq \label{eq:dual_marginal_ineq} \]
+    Therefore the \textit{sign} of the dual value $d \defined \min \br{y \cdot \probvec[\bc{V_1, \ldots, V_k}]}$ solves the marginal problem. If $d < 0$ then \cref{eq:dual_marginal_ineq} is violated and therefore the marginal problem has negative result. Likewise if $d$ satisfies \cref{eq:dual_marginal_ineq}, then a joint distribution $\prob[\mathcal{V}]$ exists. Before continuing, an important observation needs to be made. If $d \geq 0$, then it is exactly $d = 0$, due to the existence of the trivial $y = \emptyset$. This observation is an instance of the \textit{Complementary Slackness Property} of \cite{Bradley_1977}. \comment[TC]{Is this really the CSP?} Moreover, if $d < 0$, then it is unbounded $d = -\inf$. This latter point becomes clear upon recognizing that for any $y$ such that $d < 0$, another $y'$ can be constructed by multiplying $y$ by a real constant $\al$ greater than one such that,
+    \[ y' = \al y \mid \al > 1 \implies d' = \al d < d \]
+    Since a more negative $d'$ can always be found, it must be that $d$ is unbounded. This is a demonstration of the fundamental \textit{Unboundedness Property} of \cite{Bradley_1977}; if the dual is unbounded, then the primal is infeasible.
 
-    \TODO{The Primal and dual problems associated with the linear program for the marginal problem}
-    \TODO{Infeasibility Certificates and inequalities}
-    \TODO{Discuss Infeasibility Certificates basis}
+    \comment[TC]{\href{http://web.stanford.edu/~ashishg/msande111/notes/chapter4.pdf}{Farkas's lemma} here?}
+
+    \begin{definition} An \term{infeasibility certificate} is any vector $y$ that satisfies the constraints of \cref{def:dual_marginal_linear_program} and also permits violation of \cref{eq:dual_marginal_ineq} for some marginal distribution vector $\probvec[\bc{V_1, \ldots, V_k}]$.
+    \[ y \in \R^{\sum_{i=1}^{k} \abs{O_{V_i}}} : y \cdot M \succeq 0, \quad y \cdot \probvec[\bc{V_1, \ldots, V_k}] < 0 \]
+    Furthermore, any $y$ satisfying $y \cdot M \succeq 0$ induces a \term{certificate inequality} that constraints the space of marginal distribution vectors which takes the symbolic form of \cref{eq:dual_marginal_ineq},
+    \[ y \cdot \probvec[\bc{V_1, \ldots, V_k}] \geq 0 \]
+    Where the entries of the certificate $y$ act as coefficients for the entries of $\probvec[\bc{V_1, \ldots, V_k}]$.
+    \end{definition}
+    \todo[TC]{Discuss Infeasibility Certificates basis}
+
+    \begin{example}
+        The marginal problem for the inflated causal structure $\graph'$ depicted in \cref{fig:inflated_triangle_scenario} concerns itself with whether or not distributions over the pre-injectable sets $\bc{\prob[\Pi_1], \ldots, \prob[\Pi_{12}]}$ admit a joint distribution $\prob[\mathcal{\nodes'}]$ over all nodes of $\graph'$ where $\nodes' = \bigcup_{i=1}^{12}\Pi_i$. The marginalization matrix $M$ has $16,896$ rows and $16,777,216$ columns.
+        \begin{align*}
+            &\text{\# Rows} = \sum_{i=1}^{12} \abs{O_{\Pi_i}} = \sum_{i=1}^{12} 4^{\abs{\Pi_i}} = 4 \cdot 4^6 + 8 \cdot 4^3 = 16,896 \\
+            &\text{\# Columns} = \abs{O_{\nodes'}} = 4^{\abs{\nodes'}} = 4^{12} = 16,777,216
+        \end{align*}
+        With $12 \cdot 4^{12} = 201,326,592$ non-zero entries.
+    \end{example}
+
     \section{Logical Implications of Non-Contextuality}
     Following the definition of contextuality given as Definition 2.3 in \cite{Fritz_2011}
-    \begin{definition}
-        The \term{pre-injectable marginal distribution vector} denoted $b_\Pi$ or simply just the \term{marginal distribution vector} is a list of probability values over outcomes of the pre-injectable sets $\Pi$.
-    \end{definition}
 
     \textbf{Principle assumption:} The probability distribution $P$ over the pre-injectable variables admits a compatible joint distribution over the observable inflated variables.
     \textbf{Conclusions:} Given a particular event $A \in $
     \subsection{Logical Implications \& Inequalities}
     Following the work conducted by Mansfield and Fritz \cite{Mansfield_2012}, we consider a possibilistic implications of the \term{$(1,n)$-type} to be all implications of the form,
     \[ A \implies C_1 \lor \cdots \lor C_n = \bigvee_{i=1}^{n} C_i \eq \label{eq:1n_pi}\]
-    Where $A$ and each of the $C_i$'s are events or outcomes of a particular set of variables. The letter `$A$' is chosen for the event $A$ since it takes the place of the logical \term{antecedent} of \cref{eq:1n_pi}. Likewise, the letter `$C$' is chosen to represent logical \term{consequents}. The implication \cref{eq:1n_pi} can be read as \textit{whenever $A$ occurs, at least one of the $C_i$'s also occurs}. A particular scenario where \cref{eq:1n_pi} is anticipated to hold true, but is nonetheless violated is called a \term{Hardy paradox}.
+    Where $A$ and each of the $C_i$'s are simply events or outcomes of a particular set of variables. The letter `$A$' is chosen for the event $A$ since it takes the place of the logical \term{antecedent} of \cref{eq:1n_pi}. Likewise, the letter `$C$' is chosen to represent logical \term{consequents}. We refer to the set of all $C_i$'s simply as $C = \bigcup_{i=1}^n C_i$. The implication \cref{eq:1n_pi} can be read as \textit{whenever $A$ occurs, at least one element of $C$ also occurs}. A particular scenario where \cref{eq:1n_pi} is anticipated to hold true, but is nonetheless violated is called a \term{Hardy paradox}.
 
     It is possible to turn possibilistic $(1,n)$-type implications into probabilistic inequalities by recognizing that the logical implication of \cref{eq:1n_pi} induces the inequality,
     \[ \prob[][A] \leq \prob[][\bigvee_{i=1}^{n} C_i] = \sum_{i=1}^{n} \prob[][C_i] - \prob[][\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}] \leq \sum_{i=1}^{n} \prob[][C_i] \eq \label{eq:1n_ineq} \]
     Such that whenever the inequality \cref{eq:1n_ineq} is violated, the implication in \cref{eq:1n_pi} is violated as well. Note that the converse is \textit{not} true; if the inequality \cref{eq:1n_ineq} holds true, it is still possible for there to be a violation of \cref{eq:1n_pi}.
 
     \begin{remark}
-        Notice that the $\prob[][C \wedge C] \defined \prob[][\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}]$ term in \cref{eq:1n_ineq} can be read as \textit{the probability that at least two of events in $C$ occurred}. It is omitted from \cref{eq:1n_ineq} due to it's non-negativity $\prob[][C \wedge C] \geq 0$. However it is possible that $\prob[][C \wedge C]$ vanishes exactly if the elements of $C$ are pair-wise mutually exclusive such that $\prob[][C_i \wedge C_j] = 0, \forall i,j \in 1, \ldots, n$.
+        Notice that the $\prob[][C \wedge C] \defined \prob[][\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}]$ term in \cref{eq:1n_ineq} can be read as \textit{the probability that at least two of events in $C$ occurred}. It is omitted from \cref{eq:1n_ineq} due to it's non-negativity $\prob[][C \wedge C] \geq 0$. However it is possible that $\prob[][C \wedge C]$ vanishes exactly if the elements of $C$ are pairwise mutually exclusive such that $\prob[][C_i \wedge C_j] = 0, \forall i,j \in 1, \ldots, n$. Finding a set $C$ of mutual exclusive events that form a valid $(1,n)$-type implication can give rise to tighter inequalities.
     \end{remark}
 
-    \TODO{Discuss how these implications arise in the marginal problem}
-    \TODO{Mention sufficient solution to the possibilistic marginal problem}
-    \TODO{Illustrate how it can distinguish more than possibilistic differences}
-    \TODO{Discuss $(m,n)-type$ implications and the non-triviality}
-    \TODO{Link to logical bell inequalities/completeness or not?}
+    The question then remains, \textit{how does non-contextuality give rise to implications of the form of \cref{eq:1n_pi}?} We begin by making the principle assumption that a joint distribution \textit{does} exist for a family of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$. We can then derive logical \textit{tautologies} under this assumption that are of $\br{1,n}$-type using the following train of logic.
+    \begin{enumerate}
+        \item Suppose a particular marginal outcome $A \in \bigcup_{i=1}^{k} O_{V_i}$ happens to occur. For reference, take $A = \outc{V_j} \in O_{V_j}$ to belong to the outcome space of $V_j$ for some index $j$.
+        \item Since a joint distribution exists, then $A$ refers to some \textit{incomplete} knowledge about some \textit{joint} event $J$ that actually occured. In fact, $J$ is required to belong to the extendable set of $A$ in $O_{\mathcal{V}}$.
+        \[ J \in A \times O_{\mathcal{V} \setminus V_j} \]
+        \item Therefore whenever $A$ occurs, one of the elements $J$ of $A \times O_{\mathcal{V} \setminus V_j}$ \textit{has} to occur.
+        \[ A \implies J_1 \vee \cdots \vee J_l = \bigvee_{J \in A \times O_{\mathcal{V} \setminus V_j}} J\]
+        \item Now suppose we could obtain a set of marginal outcomes $C = \bc{C_1, \ldots, C_n}$ each different from $A$ such that every $J$ contains some element in $C$. In such cases, whenever a $J$ occurs, at least one element of $C$ has to occur.
+        \item Therefore obtaining a contraint of the form \cref{eq:1n_pi}.
+    \end{enumerate}
+
+
+    \todo[TC]{Discuss how these implications arise in the marginal problem}
+    \todo[TC]{Mention sufficient solution to the possibilistic marginal problem}
+    \todo[TC]{Illustrate how it can distinguish more than possibilistic differences}
+    \todo[TC]{Discuss $(m,n)-type$ implications and the non-triviality}
+    \todo[TC]{Link to logical bell inequalities/completeness or not?}
 
     \section{Hypergraph Transversals}
-    \TODO{Convince one how marginal implications are a hypergraph transversal or covering problem}
-    \TODO{Existing algorithms}
-    \TODO{Discuss the Inequalities Derived/ Trivial and non-trivial}
-    \TODO{Weighted transversals and Optimizations}
-    \TODO{Seeding inequalities (huge advantage here)}
+    \todo[TC]{Convince one how marginal implications are a hypergraph transversal or covering problem}
+    \todo[TC]{Existing algorithms}
+    \todo[TC]{Discuss the Inequalities Derived/ Trivial and non-trivial}
+    \todo[TC]{Weighted transversals and Optimizations}
+    \todo[TC]{Seeding inequalities (huge advantage here)}
     \section{Deriving Symmetric Inequalities}
-    \TODO{Identify the desired symmetry group}
-    \TODO{How we obtained the desired symmetry group}
-    \TODO{Group orbits to symmetric marginal description matrix}
-    \TODO{Infeasibility on symmetric marginal problem}
-    \TODO{Hardy Transversals can't work on the symmetric marginal problem}
-    \TODO{Symmetrizing non-symmetric inequalities through avoiding orbits}
-    \TODO{higher order transversals on mutually impossible events}
+    \todo[TC]{Identify the desired symmetry group}
+    \todo[TC]{How we obtained the desired symmetry group}
+    \todo[TC]{Group orbits to symmetric marginal description matrix}
+    \todo[TC]{Infeasibility on symmetric marginal problem}
+    \todo[TC]{Hardy Transversals can't work on the symmetric marginal problem}
+    \todo[TC]{Symmetrizing non-symmetric inequalities through avoiding orbits}
+    \todo[TC]{higher order transversals on mutually impossible events}
     \section{Non-linear Optimizations}
-    \TODO{Why Inequalities are great for optimizations}
-    \TODO{Non-linearity}
-    \TODO{Techniques Used}
-    \TODO{Finding maximum violation of CHSH easily}
-    \TODO{Unreliance when number of parameters increases}
-    \TODO{Issues with local minimum}
-    \TODO{Using initial conditions close to fritz, obtain greater violation}
-    \TODO{Greater violation shares possibilistic structure of fritz and violates CHSH under definition}
-    \TODO{Not realizable with maximally entangled qubit states}
-    \TODO{Not realizable with separable measurements}
-    \TODO{Many non-trivial inequalities to be tested}
-    \TODO{inequality -> dist -> inequality evolution}
+    \todo[TC]{Why Inequalities are great for optimizations}
+    \todo[TC]{Non-linearity}
+    \todo[TC]{Techniques Used}
+    \todo[TC]{Finding maximum violation of CHSH easily}
+    \todo[TC]{Unreliance when number of parameters increases}
+    \todo[TC]{Issues with local minimum}
+    \todo[TC]{Using initial conditions close to fritz, obtain greater violation}
+    \todo[TC]{Greater violation shares possibilistic structure of fritz and violates CHSH under definition}
+    \todo[TC]{Not realizable with maximally entangled qubit states}
+    \todo[TC]{Not realizable with separable measurements}
+    \todo[TC]{Many non-trivial inequalities to be tested}
+    \todo[TC]{inequality -> dist -> inequality evolution}
     \section{Conclusions}
-    \TODO{Inflation technique allows one to witness fritz incompatibility}
-    \TODO{Linear optimization induces certificates which are incompatibility witnesses}
-    \TODO{There are quantum distributions in the triangle scenario that are incompatible and different from fritz in terms of entanglement but not possibilistic structure}
+    \todo[TC]{Inflation technique allows one to witness fritz incompatibility}
+    \todo[TC]{Linear optimization induces certificates which are incompatibility witnesses}
+    \todo[TC]{There are quantum distributions in the triangle scenario that are incompatible and different from fritz in terms of entanglement but not possibilistic structure}
     \section{Open Questions \& Future Work}
-    \TODO{Lots of stuff}
+    \todo[TC]{Lots of stuff}
     \appendix
     \section{Computationally Efficient Parametrization of the Unitary Group}
     Spengler, Huber and Hiesmayr \cite{Spengler_2010_Unitary} suggest the parameterization of the unitary group $\mathcal{U}\br{d}$ using a $d\times d$-matrix of real-valued parameters $\lambda_{n, m}$
@@ -483,8 +596,8 @@
     Revealing the simplified form of $R_{n,m}$,
     \[ R_{n,m} = \mathbb{I} + \br{\ket{m}\bra{m} + \ket{n}\bra{n}} \sum_{j=1}^{\inf} \br{-1}^j\f{\lambda_{n,m}^{2j}}{\br{2j}!} + \br{\ket{m}\bra{n} - \ket{n}\bra{m}} \sum_{j=0}^{\inf} \br{-1}^j\f{\lambda_{n,m}^{2j+1}}{\br{2j+1}!} \]
     \[ R_{n,m} = \mathbb{I} + \br{\ket{m}\bra{m} + \ket{n}\bra{n}} \br{\cos\lambda_{n,m} - 1} + \br{\ket{m}\bra{n} - \ket{n}\bra{m}} \sin\lambda_{n,m} \]
-    \TODO{Explanation of Computational Complexity $\mathcal{O}\br{d^3}$ vs. $\mathcal{O}\br{1}$ using \cite{Moler_2003}}
-    \TODO{Pre-Caching for Fixed dimension $d$}
+    \todo[TC]{Explanation of Computational Complexity $\mathcal{O}\br{d^3}$ vs. $\mathcal{O}\br{1}$ using \cite{Moler_2003}}
+    \todo[TC]{Pre-Caching for Fixed dimension $d$}
 
     \section{Parametrization of Quantum States \& Measurements}
 
