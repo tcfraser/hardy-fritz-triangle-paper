@@ -4,6 +4,13 @@
 \usepackage{xparse}
 \usepackage{cleveref}
 
+% % === Required for matplotlib2tikz ===
+% \usepackage[utf8]{inputenc}
+% % \usepackage{fontspec}
+% \usepackage{pgfplots}
+
+% \usepackage{pgf}
+
 % === Drafting Declarations ===
 \draftprofile[TC Fraser]{TC}{Red}
 \draftprofile[Elie Wolfe]{E}{Green}
@@ -65,34 +72,40 @@
     \section{Definitions \& Notation}
 
     \begin{definition}
-        Borrowing the notation from \cite{Fritz_2014}, each random variable $v$ has a set of all possible outcomes called the \term{outcome space} or sample space and is denoted $O_v$. When referencing a \textit{specific} element of $O_v$ or outcome of $v$, the notation $\outc{v}$ is used. This notation generalizes to set of random variables $V = \bc{v_1, \ldots, v_{\abs{V}}}$; the outcome space $O_V$ for a set of random variables $V$ is the Cartesian product of the individual outcome spaces,
+        Borrowing the notation from \cite{Fritz_2014}, each random variable $v$ has a set of all possible outcomes called the \term{outcome space} or \term{valuation space} and is denoted $O_v$. When referencing a \textit{specific} element of $O_v$ or \textit{valuation} of $v$, the notation $\outc{v}$ is used. This notation generalizes to set of random variables $V = \bc{v_1, \ldots, v_{\abs{V}}}$;
+        a specific outcome of $\outc{V} \in O_V$ is used to reference a particular tuple or vector of outcomes,
+        \[ \outc{V} \defined \br{\outc{v_1}, \outc{v_2}, \ldots, \outc{v_{\abs{V}}} } = \br{\outc{v}}_{v \in V} \eq \label{eq:outcomespace}\]
+        It is important to note that the ordering of events in \cref{eq:outcomespace} is irrelevant. Similarly, the outcome space $O_V$ for a set of random variables $V$ is the \term{valuation product} of the individual outcome spaces,
         \[ O_V \defined O_{v_1} \times \cdots \times O_{v_{\abs{V}}} \]
-        Similarly, a specific outcome of $\outc{V} \in O_V$ is used to reference a particular collection of outcomes,
-        \[ \outc{V} \defined \bc{\outc{v_1}, \outc{v_2}, \ldots, \outc{v_{\abs{V}}} } \]
+        Where `$\times$' denotes is defined such that,
+        \[ \outc{A} \times \outc{B} \defined \br{\outc{a_1}, \ldots, \outc{a_{\abs{A}}}, \outc{b_1}, \ldots, \outc{b_{\abs{B}}}} \]
+        When referencing the probability that and set of variables $V$ has outcome $\outc{V}$ (say $v_1 = 0, v_2 = 3$), we intend for the following class of notations to be used interchangeably.
+        \[ \prob[V][\outc{V}] = \prob[][\outc{V}] = \prob[][\outc{v_1}\outc{v_2}] = \prob[][v_1 = 0, v_2 = 3] = \prob[][v_2 = 3, v_1 = 0] = \prob[v_1, v_2][03] \]
     \end{definition}
 
     \begin{definition}
         \label{def:extendable}
-        An outcome $\outc{V} \in O_V$ over the set $V$ is said to be \term{extendable} to an outcome $\outc{W} \in O_W$ over the set $W$ if $\outc{V}$ is contained in $\outc{W}$:
-        \[ \outc{V} \subseteq \outc{W} \]
-        This also implies the necessary condition that $V \subseteq W$. The idea being that a \textit{less specific} outcome $\outc{V}$ can be made \textit{more specific} by assigning outcomes to the remaining random variables in $W \setminus V$.
+        An outcome $\outc{V}$ is said to be \term{extendable} to an outcome $\outc{W}$ (where $V \subseteq W$) if there exists an outcome $\outc{W\setminus V}$ such that:
+        \[ \outc{W} = \outc{W\setminus V} \times \outc{V} \]
+        The idea being that a \textit{less specific} outcome $\outc{V}$ can be made \textit{more specific} by assigning outcomes to the remaining random variables in $W \setminus V$. If such an outcome $\outc{W\setminus V}$ exists, it is unique.
     \end{definition}
 
     \begin{definition}
         The set of all extendable outcomes of $\outc{V}$ in $O_{W}$ is called the \term{extendable set} and can be written as,
-        \[ \outc{V} \times O_{W\setminus V} = \bc{\outc{W} \in O_{W} \mid \outc{V} \subseteq \outc{W}} \subseteq O_{W} \]
+        \[ \outc{V} \times O_{W\setminus V} \defined \bc{\outc{W} \in O_{W} \mid \exists \outc{W\setminus V} : \outc{W\setminus V} \times \outc{V} = \outc{W}} \]
+        The extendable set of $\outc{V}$ in $W$ is the set of all outcomes of $O_W$ that \textit{agree} with $\outc{V}$ about valuations for variables in $V$. In this language, two outcomes $\outc{V}$ and $\outc{W}$ are \term{compatible} if they are both extendable to some outcome $\outc{V \cup W}$. Equivalently, $\outc{V}$ and $\outc{W}$ agree on their valuations of $V \cap W$.
     \end{definition}
 
     \begin{example}
-        Consider two sets of random variables $V = \bc{a, b}$ and $W = \bc{a, b, c}$. Clearly $V \subseteq W$; a prerequisite for extendability. Also take all individual outcome spaces to be finite and of order 3: $O_a = O_b = O_c = \bc{1,2,3}$. Then $\outc{V} = \outc{\bc{a,b}} = \bc{a = 1, b = 2}$ is extendable to the outcome $\outc{W} = \bc{a = 1, b = 2, c = 1}$, and the extendable set of $\outc{V}$ in $O_{W}$ is,
-        \[ \outc{V} \times O_{W\setminus V} = \outc{\bc{a,b}} \times O_c = \bc{\bc{a = 1, b = 2, c = 1}, \bc{a = 1, b = 2, c = 2}, \bc{a = 1, b = 2, c = 3}} \]
+        Consider two sets of random variables $V = \bc{a, b}$ and $W = \bc{a, b, c}$. Clearly $V \subseteq W$; a prerequisite for extendability. Also take all individual outcome spaces to be finite and of order 3: $O_a = O_b = O_c = \bc{1,2,3}$. Then $\outc{V} = \outc{\bc{a,b}} = \br{a = 1, b = 2}$ is extendable to the outcome $\outc{W} = \br{a = 1, b = 2, c = 1}$, and the extendable set of $\outc{V}$ in $O_{W}$ is,
+        \[ \outc{\bc{a,b}} \times O_c = \bc{\br{a = 1, b = 2, c = 1}, \br{a = 1, b = 2, c = 2}, \br{a = 1, b = 2, c = 3}} \]
     \end{example}
 
-    \begin{definition}
-        Two outcomes $\outc{V_1}$ and $\outc{V_2}$ over two distinct sets of random variables $V_1$ and $V_2$ are called \term{accordant} or \textit{compatible} if they are mutually realizable. In terms of extendable sets, $\outc{V_1}$ and $\outc{V_2}$ are accordant if there exists an outcome $\outc{V_1 \cup V_2} \in O_{V_1 \cup V_2}$ such that,
-        \[ \outc{V_1}, \outc{V_2} \subseteq \outc{V_1 \cup V_2}  \]
-        Accordance between two outcomes is the \textit{opposite} of exclusive.
-    \end{definition}
+    % \begin{definition}
+    %     Two outcomes $\outc{V_1}$ and $\outc{V_2}$ over two distinct sets of random variables $V_1$ and $V_2$ are called \term{accordant} or \textit{compatible} if they are mutually realizable. In terms of extendable sets, $\outc{V_1}$ and $\outc{V_2}$ are accordant if there exists an outcome $\outc{V_1 \cup V_2} \in O_{V_1 \cup V_2}$ such that,
+    %     \[ \outc{V_1}, \outc{V_2} \subseteq \outc{V_1 \cup V_2}  \]
+    %     Accordance between two outcomes is the \textit{opposite} of exclusive.
+    % \end{definition}
 
     \begin{definition}
         \label{def:graph}
@@ -141,8 +154,14 @@
     \end{definition}
 
     \begin{definition}
+        \label{def:hgraph_trans}
         A \term{hypergraph transversal} (or edge hitting set) $\trans$ of a hypergraph $\hgraph$ is a set of nodes $\trans \subseteq \nodes$ that have non-empty intersections with every edge in $\edges$.
         \[ \trans = \bc{n_i \in \nodes \mid i \in \ind_\trans } \quad \forall e \in \edges : \trans \cap e \neq \emptyset \]
+    \end{definition}
+
+    \begin{definition}
+        A \term{minimal hypergraph transversal} $\trans$ is any valid transversal (\cref{def:hgraph_trans}) of $\hgraph$ where every node $n$ is \textit{necessary} to retain validity. For each node $n$ in $\trans$, $\trans \setminus n$ is no longer a transversal.
+        \[ \trans = \bc{n_i \in \nodes \mid i \in \ind_\trans } \quad \forall i \in \ind_\trans, \exists e \in \edges : \br{\trans \setminus n_i} \cap e = \emptyset \]
     \end{definition}
 
     \begin{definition}
@@ -162,6 +181,18 @@
         \[ \nodes_L \cap \nodes_O = \emptyset \qquad \nodes_L \cup \nodes_O = \nodes \]
     \end{definition}
 
+    \begin{definition}
+        The \term{product distribution} two distributions is denoted as usual with $\times$ and is defined as,
+        \[ \br{\prob[v] \times \prob[w]}\br{\outc{v}, \outc{w}} \defined \prob[v][\outc{v}]\prob[w][\outc{w}] \]
+        A product distribution of $k$ distributions is defined recursively,
+        \[ \prod_{i=1}^{k} \prob[v_i] \defined \br{\prob[v_1] \times \cdots \times \prob[v_k]} \]
+    \end{definition}
+
+    \begin{definition}
+        The \term{marginalization} of a distribution $\prob[v \cup w]$ to the distribution $\prob[v]$ is denoted $\sum_{w} \prob[v \cup w] = \prob[v]$ and is defined such that,
+        \[ \forall \outc{v} \in O_v : \br{\sum_{w} \prob[v, w]}\br{\outc{v}} \defined \sum_{o\bs{w} \in O_w} \prob[v, w][\outc{v}, \outc{w}] \]
+    \end{definition}
+
     \todo[TC]{How many definitions do I need to write??}
 
     \section{Triangle Scenario}
@@ -169,7 +200,7 @@
     Focusing on the inflation depicted in \cref{fig:inflated_triangle_scenario}, we obtained the maximally pre-injectable sets through the procedure outlined in \cite{Inflation}.
     \begin{equation}
         \begin{gathered}
-            \textbf{Pre-injectable Sets $\Pi$} \\
+            \textbf{Maximal Pre-injectable Sets $\Pi$} \\
             \bc{A_1, B_1, C_1, A_4, B_4, C_4} \\
             \bc{A_1, B_2, C_3, A_4, B_3, C_2} \\
             \bc{A_2, B_3, C_1, A_3, B_2, C_4} \\
@@ -367,7 +398,14 @@
         \term{The Marginal Problem:} Given a set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ where $V_i \subseteq \mathcal{V}$ for some set of random variables $\mathcal{V}$ and $k \geq 2$, does there exist a joint distribution $\prob[\mathcal{V}]$ such that each given distribution $\prob[V_i]$ can be obtained from marginalizing $\prob[\mathcal{V}]$?
         \[ \forall i \in \bc{1, \ldots, k} : \prob[V_i] = \sum_{\mathcal{V} \setminus V_i} \prob[\mathcal{V}] \]
         Typically (although not strictly necessary), $\mathcal{V}$ is taken to mean the union of all $V_i$'s.
-        \[ \mathcal{V} = V_1 \cup \cdots V_k = \bigcup_{i=1}^{k} V_i \eq \label{eq:marginals_union} \]
+        \[ \mathcal{V} = V_1 \cup \cdots \cup V_k = \bigcup_{i=1}^{k} V_i \eq \label{eq:marginals_union} \]
+    \end{definition}
+
+    \begin{definition}
+        \label{def:marginal_model}
+        A reoccurring motif of these discussions will be the set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ mentioned in \cref{def:marginal_model}. In agreement with \cite{Fritz_2011} we will call this set of distributions a \term{marginal model} and denote it $\prob^\mathcal{M}$ provided that they are \textit{compatible}:
+        \[ \forall i \neq j \text{ if } V_i \cap V_j \neq \emptyset \text{ then } \sum_{V_i \setminus V_j} \prob[V_i] = \sum_{V_j \setminus V_i} \prob[V_j]  \]
+        We call the set of subsets $\bc{V_1, \ldots, V_k}$ the marginal contexts or the \term{maximal marginal scenario} and an individual $V_i$ a \term{marginal context}. Finally we will denote the union of all contexts $\mathcal{V}$ and define it exactly as in \cref{eq:marginals_union}
     \end{definition}
 
     \todo[TC]{Discuss Compatibility, connection to cooperative games/resources, bell incompatibility?}
@@ -405,9 +443,9 @@
     \subsection{Casting the Inflated Marginal Problem as a Linear Program}
     After obtaining the maximal pre-injectable sets associated with a particular inflation, one can write the marginal problem of \cref{def:marginal_problem} as a linear program. The key observation is that marginalization is a \textit{linear} operator that can be performed via a matrix multiplication. To do this, we will define the \textit{marginalization matrix}.
     \begin{definition}
-        The \term{marginalization matrix} $M$ for a collection random variables $\bc{V_1, \dots, V_k}$ is a bit-wise matrix where the columns are indexed by \textit{joint} outcomes $\outc{\mathcal{V}} \in O_{\mathcal{V}}$ and the rows are indexed by \textit{marginal} outcomes corresponding to all outcomes $\outc{V_i} \in O_{V_i}$ of the \textit{individual} subsets $V_i$. Here, $\mathcal{V}$ is the union of all random variables exactly as in \cref{eq:marginals_union}. The entries of $M$ are populated whenever a row index is extendable to a column index.
+        The \term{marginalization matrix} $M$ for a marginal scenario $\bc{V_1, \dots, V_k}$ is a bit-wise matrix where the columns are indexed by \textit{joint} outcomes $\outc{\mathcal{V}} \in O_{\mathcal{V}}$ and the rows are indexed by \textit{marginal} outcomes corresponding to all outcomes $\outc{V_i} \in O_{V_i}$ of the marginal contexts $V_i$. The entries of $M$ are populated whenever a row index is extendable to a column index.
         \[ M_{\br{o\bs{V_i}, o\bs{\mathcal{V}}}} = \begin{cases}
-            1 & \outc{V_i} \subseteq \outc{\mathcal{V}} \\
+            1 & \exists \outc{\mathcal{V} \setminus V_i} \text{ such that } \outc{V_i} \times \outc{\mathcal{V} \setminus V_i} = \outc{\mathcal{V}} \\
             0 & \text{otherwise}
         \end{cases} \]
         The marginalization matrix has $\abs{O_\mathcal{V}}$ columns and $\sum_{i=1}^{k} \abs{O_{V_i}}$ rows. The number of non-zero entries of $M$ is a simple expression,
@@ -436,11 +474,11 @@
 
     \begin{definition}
         The \term{joint distribution vector} $\probvec[\mathcal{V}]$ for a probability distribution $\prob[\mathcal{V}]$ is the vector whose entries are the positive, real-valued probabilities that $\prob[\mathcal{V}]$ assigns to each outcome of $\outc{\mathcal{V}}$ of $O_\mathcal{V}$. $\probvec[\mathcal{V}]$ shares the same indices as the \textit{column} indices of $M$.
-        \[ \probvec[\mathcal{V}]^\intercal = \bs{\prob[\mathcal{V}][\outc{\mathcal{V}}] \mid \outc{\mathcal{V}} \in O_{\mathcal{V}}} \]
+        \[ \probvec[\mathcal{V}]^\intercal = \bs{\prob[\mathcal{V}][\outc{\mathcal{V}}]}_{o\bs{\mathcal{V}} \in O_{\mathcal{V}}} \]
     \end{definition}
     \begin{definition}
-        The \term{marginal distribution vector} $\probvec[\bc{V_1, \ldots, V_k}]$ for a set of probability distributions $\bc{P_{V_1}, \ldots, P_{V_k}}$ is the vector whose entries are probabilities over the set of \term{marginal outcomes} $\bigcup_{j=1}^{k} O_{V_j}$. $\probvec[\bc{V_1, \ldots, V_k}]$ shares the same indices as the \textit{row} indices of $M$.
-        \[ \probvec[\bc{V_1, \ldots, V_k}]^\intercal = \bs{\prob[V_i][\outc{V_i}] \mid \outc{V_i} \in \bigcup_{j=1}^{k} O_{V_j}} \]
+        The \term{marginal distribution vector} $\probvec[\bc{V_1, \ldots, V_k}]$ for a marginal model $\bc{P_{V_1}, \ldots, P_{V_k}}$ is the vector whose entries are probabilities over the set of \term{marginal outcomes} $\bigcup_{j=1}^{k} O_{V_j}$. $\probvec[\bc{V_1, \ldots, V_k}]$ shares the same indices as the \textit{row} indices of $M$.
+        \[ \probvec[\bc{V_1, \ldots, V_k}]^\intercal = \bs{\prob[V_i][\outc{V_i}] }_{o\bs{V_i} \in \bigcup_{j=1}^{k} O_{V_j}} \]
     \end{definition}
     The marginal and joint distribution vectors are related via the marginalization matrix $M$. Given a joint distribution vector $\probvec[\mathcal{V}]$ one can obtain the marginal distribution vector $\probvec[\bc{V_1, \ldots, V_k}]$ by multiplying $M$ by $\probvec[\mathcal{V}]$.
     \[ \probvec[\bc{V_1, \ldots, V_k}] = M \cdot \probvec[\mathcal{V}] \eq \label{eq:marginal_problem_matrix} \]
@@ -493,43 +531,65 @@
         With $12 \cdot 4^{12} = 201,326,592$ non-zero entries.
     \end{example}
 
+    \todo[TC]{Discuss the certificate inequalities we found.}
+
     \section{Logical Implications of Non-Contextuality}
     Following the definition of contextuality given as Definition 2.3 in \cite{Fritz_2011}
-
-    \textbf{Principle assumption:} The probability distribution $P$ over the pre-injectable variables admits a compatible joint distribution over the observable inflated variables.
-    \textbf{Conclusions:} Given a particular event $A \in $
+    \todo[TC]{Motivate why certificates are not enough, want many solutions}
     \subsection{Logical Implications \& Inequalities}
     Following the work conducted by Mansfield and Fritz \cite{Mansfield_2012}, we consider a possibilistic implications of the \term{$(1,n)$-type} to be all implications of the form,
     \[ A \implies C_1 \lor \cdots \lor C_n = \bigvee_{i=1}^{n} C_i \eq \label{eq:1n_pi}\]
-    Where $A$ and each of the $C_i$'s are simply events or outcomes of a particular set of variables. The letter `$A$' is chosen for the event $A$ since it takes the place of the logical \term{antecedent} of \cref{eq:1n_pi}. Likewise, the letter `$C$' is chosen to represent logical \term{consequents}. We refer to the set of all $C_i$'s simply as $C = \bigcup_{i=1}^n C_i$. The implication \cref{eq:1n_pi} can be read as \textit{whenever $A$ occurs, at least one element of $C$ also occurs}. A particular scenario where \cref{eq:1n_pi} is anticipated to hold true, but is nonetheless violated is called a \term{Hardy paradox}.
+    Where $A$ and each of the $C_i$'s are simply events or outcomes of a particular set of variables. The letter `$A$' is chosen for the event $A$ since it takes the place of the logical \term{antecedent} of \cref{eq:1n_pi}. Likewise, the letter `$C$' is chosen to represent logical \term{consequents}. We refer to the set of all $C_i$'s simply as $C = \bc{C_i \mid i \in 1, \ldots, n}$. The implication \cref{eq:1n_pi} can be read as \textit{whenever $A$ occurs, at least one element of $C$ also occurs}.
 
     It is possible to turn possibilistic $(1,n)$-type implications into probabilistic inequalities by recognizing that the logical implication of \cref{eq:1n_pi} induces the inequality,
-    \[ \prob[][A] \leq \prob[][\bigvee_{i=1}^{n} C_i] = \sum_{i=1}^{n} \prob[][C_i] - \prob[][\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}] \leq \sum_{i=1}^{n} \prob[][C_i] \eq \label{eq:1n_ineq} \]
+    \[ \prob[][A] \leq \prob[][\bigvee_{i=1}^{n} C_i] \]
+    Furthermore utilizing Boole's inequality,
+    \[ \prob[][\bigvee_{i=1}^{n} C_i] \leq \sum_{i=1}^{n} \prob[][C_i] \eq \label{eq:booles} \]
+    Gives,
+    \[ \prob[][A] \leq \sum_{i=1}^{n} \prob[][C_i] \eq \label{eq:1n_ineq} \]
     Such that whenever the inequality \cref{eq:1n_ineq} is violated, the implication in \cref{eq:1n_pi} is violated as well. Note that the converse is \textit{not} true; if the inequality \cref{eq:1n_ineq} holds true, it is still possible for there to be a violation of \cref{eq:1n_pi}.
 
     \begin{remark}
-        Notice that the $\prob[][C \wedge C] \defined \prob[][\bigvee_{\stackrel{j,k = 1}{j \neq k}}^n \bs{C_j \wedge C_k}]$ term in \cref{eq:1n_ineq} can be read as \textit{the probability that at least two of events in $C$ occurred}. It is omitted from \cref{eq:1n_ineq} due to it's non-negativity $\prob[][C \wedge C] \geq 0$. However it is possible that $\prob[][C \wedge C]$ vanishes exactly if the elements of $C$ are pairwise mutually exclusive such that $\prob[][C_i \wedge C_j] = 0, \forall i,j \in 1, \ldots, n$. Finding a set $C$ of mutual exclusive events that form a valid $(1,n)$-type implication can give rise to tighter inequalities.
+        An important result of Boole's inequality is that \cref{eq:booles} becomes an exact \textit{equality} whenever elements of $C$ are pairwise disjoint. Therefore, finding a set $C$ of pairwise disjoint events satisfying \cref{eq:1n_pi} will give rise to tighter inequalities.
     \end{remark}
 
-    The question then remains, \textit{how does non-contextuality give rise to implications of the form of \cref{eq:1n_pi}?} We begin by making the principle assumption that a joint distribution \textit{does} exist for a family of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$. We can then derive logical \textit{tautologies} under this assumption that are of $\br{1,n}$-type using the following train of logic.
+    \subsection{Implications in the Marginal Problem}
+
+    The question then remains, \textit{how does non-contextuality give rise to implications of the form of \cref{eq:1n_pi}?} We begin by making the principle assumption that a joint distribution \textit{does} exist for a family of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$. We can then derive logical \textit{tautologies} under this assumption that are of $\br{1,n}$-type, which we call \term{marginal implications}, using the following train of logic.
     \begin{enumerate}
         \item Suppose a particular marginal outcome $A \in \bigcup_{i=1}^{k} O_{V_i}$ happens to occur. For reference, take $A = \outc{V_j} \in O_{V_j}$ to belong to the outcome space of $V_j$ for some index $j$.
         \item Since a joint distribution exists, then $A$ refers to some \textit{incomplete} knowledge about some \textit{joint} event $J$ that actually occured. In fact, $J$ is required to belong to the extendable set of $A$ in $O_{\mathcal{V}}$.
         \[ J \in A \times O_{\mathcal{V} \setminus V_j} \]
         \item Therefore whenever $A$ occurs, one of the elements $J$ of $A \times O_{\mathcal{V} \setminus V_j}$ \textit{has} to occur.
-        \[ A \implies J_1 \vee \cdots \vee J_l = \bigvee_{J \in A \times O_{\mathcal{V} \setminus V_j}} J\]
-        \item Now suppose we could obtain a set of marginal outcomes $C = \bc{C_1, \ldots, C_n}$ each different from $A$ such that every $J$ contains some element in $C$. In such cases, whenever a $J$ occurs, at least one element of $C$ has to occur.
-        \item Therefore obtaining a contraint of the form \cref{eq:1n_pi}.
+        \[ A \implies J_1 \vee \cdots \vee J_l = \bigvee_{J \in A \times O_{\mathcal{V} \setminus V_j}} J \eq \label{eq:A_impies_extendable}\]
+        \item Now suppose we could obtain a set of marginal outcomes $C = \bc{C_1, \ldots, C_n}$ each different from $A$ such that every $J$ is in the extendable set of at least one element $C$. If such a $C$ can be found, then the possibility of at least one $J$ occurring implies the possibility of at least one $C$ occurring.
+        \[ J_1 \vee \cdots \vee J_l \implies C_1 \vee \cdots \vee C_n \eq \label{eq:extendable_implies_cover} \]
+
+        \item Combing \cref{eq:A_impies_extendable} with \cref{eq:extendable_implies_cover}, one obtains \cref{eq:1n_pi}.
     \end{enumerate}
 
+    \todo[TC]{Talk about why this is called hardy paradox}
 
-    \todo[TC]{Discuss how these implications arise in the marginal problem}
+    Finding all marginal implications for a chosen marginal outcome $A$ corresponds to finding a set of marginal outcomes $C = \bc{C_1, \ldots, C_n}$ whose extendable sets \textit{cover} the extendable set of $A$. Formally this corresponds to a \term{set covering} problem \todo[TC]{cite} which we elected to cast as the equivalent \term{hypergraph transversal problem}.
+
     \todo[TC]{Mention sufficient solution to the possibilistic marginal problem}
     \todo[TC]{Illustrate how it can distinguish more than possibilistic differences}
+
+    Given an antecedent $A$, we can construct a hypergraph $\hgraph_{A}$ with nodes $\nodes_A$ and $\edges_A$. The edges are labeled by outcomes in $A$'s extendable set $A \times O_{\mathcal{V} \setminus V_j}$, namely $\outc{\mathcal{V}}$, and contain all marginal outcomes compatible with $\outc{\mathcal{V}}$. The nodes are the subset of marginal outcomes compatible with $A$; equivalently the union of all edges.
+    \todo[TC]{Notation for compatible and extendable?}
+    \[ \edges_A = \bc{\outc{\mathcal{V}} \mid \outc{\mathcal{V}} \in A \times O_{\mathcal{V} \setminus V_j}} \]
+
+    The nodes are all marginal outcomes $C$ compatible with $A$.
+    \[ \nodes_A = \bc{n \in \bigcup_{i=1}^{k} O_{V_i} \mid n \neq A, n   } \]
+    And edges $\edges_A$ labeled by elements of $A$'s extendable set $\outc{\mathcal{V} \setminus V_j} \times$
+
+
+
+
     \todo[TC]{Discuss $(m,n)-type$ implications and the non-triviality}
     \todo[TC]{Link to logical bell inequalities/completeness or not?}
 
-    \section{Hypergraph Transversals}
+    \subsection{Hypergraph Transversals}
     \todo[TC]{Convince one how marginal implications are a hypergraph transversal or covering problem}
     \todo[TC]{Existing algorithms}
     \todo[TC]{Discuss the Inequalities Derived/ Trivial and non-trivial}
@@ -544,6 +604,43 @@
     \todo[TC]{Symmetrizing non-symmetric inequalities through avoiding orbits}
     \todo[TC]{higher order transversals on mutually impossible events}
     \section{Non-linear Optimizations}
+    \label{sec:optimizations}
+    Compatibility inequalities for a given causal structure are fantastic for finding incompatible distributions. In the inflation technique, this is no exception. Parameterizing a space distributions using a set of real-valued parameters $\lambda$, enables us to perform numerical optimizations against these inequalities in hopes that a particular set of parameters $\lambda$ is able to generate an incompatible distribution $\prob$. To illustrate this generic procedure and it's reliability, we will first examine the popular CHSH inequality.
+    \subsection{Numerical Violations of The CHSH Inequality}
+    The CHSH inequality \cite{CHSH_Original} can we viewed as a causal compatibility inequality for iconic the Bell Scenario (Fig. 19 of \cite{Wood_2012}, Fig. 11 of \cite{Inflation}, Fig. 1 a) of \cite{Tavakoli_2015}, etc.) corresponding to Bell's notion of local causality \cite{Wood_2012}. It constrains the set of 2-outcome bipartite distributions over local binary measurement settings for each party $\prob[AB\mid S_A S_B] \defined \bc{\prob[AB\mid 0 0], \prob[AB\mid 01], \prob[AB\mid 10], \prob[AB\mid 11]}$. Numerical optimization \textit{should} obtain the algebraic violation associated with the PR-Box correlations \cite{PR_1995}. Maintaining full generality, we simply need to parameterize these $4$ distributions using \cref{eq:uniform_param}, each requiring $4$ real-valued parameters.
+
+    % \begin{figure}
+    % \newlength\figureheight
+    % \newlength\figurewidth
+    % \setlength\figureheight{2.7in}
+    % \setlength\figurewidth{.48\textwidth}
+    % \begin{center}
+    %     \begin{minipage}[b]{.48\textwidth}
+    %         \centering
+    %         \scalebox{1.0}{%
+    %             \input{figures/example.pgf}
+    %         }
+    %         \caption{Caption 1}
+    %         \label{fig:fig1}
+    %     \end{minipage}\hspace{0.04\textwidth}%
+    %     \begin{minipage}[b]{.48\textwidth}
+    %         \centering
+    %         \scalebox{1.0}{%
+    %             \input{figures/CHSH_convex}
+    %         }
+    %         \caption{Caption 2}
+    %         \label{fig:fig2}
+    %     \end{minipage}
+    % \end{center}
+    % \end{figure}
+
+    \begin{center}
+        \includegraphics{figures/example.pdf}
+    \end{center}
+
+    \todo[TC]{Demonstrate Quantum, Convexity}
+
+
     \todo[TC]{Why Inequalities are great for optimizations}
     \todo[TC]{Non-linearity}
     \todo[TC]{Techniques Used}
@@ -600,7 +697,20 @@
     \todo[TC]{Pre-Caching for Fixed dimension $d$}
 
     \section{Parametrization of Quantum States \& Measurements}
+    \section{Convex Parametrization of Finite Probability Distributions}
+    As discussed in \cref{sec:optimizations}, there is a need to parameterize the family of all probability distributions $\prob[V]$ over a given set of variables $V = \br{v_1, \ldots, v_{\abs{V}}}$. If the cardinality of $O_{V}$ is finite, then this computationally feasible. The space of probability distributions over $n = \abs{O_{V}}$ distinct outcomes forms a $n-1$ dimensional convex polytope naturally embedded in $\R_{\geq 0}^n$ \cite{Brunner_2013} that is parameterizable by $n-1$ real value parameters; normalization $\sum_{o\bs{V} \in O_V} \prob[V][\outc{V}] = 1$ accounts for the `$-1$'. An example of a non-degenerate parameterization of $\prob[V]$ consists of $n-1$ parameters $\lambda = \br{\lambda_1, \ldots, \lambda_{n-1}}, \lambda_i \in \bs{0, \pi/2}$ which generate the probabilities $n$ probability values $p_j$ using hyperspherical coordinates \cite{Hedemann_2013, Spengler_2010_Unitary},
+    \begin{equation}
+    \begin{gathered}
+        \label{eq:convex_param}
+        p_j = \cos^2 \lambda_j \prod_{i=1}^{j-1} \sin^2 \lambda_i \quad \forall j \in 1, \ldots, n - 1 \\
+        p_n = \prod_{i=1}^{n-1} \sin^2 \lambda_i
+    \end{gathered}
+    \end{equation}
+    Furthermore due to the periodicity of the parameter space $\lambda$, \cref{eq:convex_param} can be used for either constrained or unconstrained optimization problems.
 
+    Although non-degenerate, this parameterization suffers from uniformity; a randomly sampled vector of parameters $\lambda$ \textit{does not} translate to a randomly sampled probability $\prob[V]$. An easy to implement, degenerate parameterization of $\prob[V]$ can be constructed by simply beginning with $n$ real parameters $\lambda = \br{\lambda_1, \ldots, \lambda_n}$, then making them positive and normalized by their sum.
+    \[ p_j = \f{\abs{\lambda_j}}{\sum_{i=1}^{n} \abs{\lambda_i}} \quad \forall j \in 1, \ldots, n \eq \label{eq:uniform_param} \]
+    This retains the desired property that a uniformly sampled vector $\lambda_i \in \bs{0,1}$ induces a uniform sampling of distributions $\prob[V]$. For various convex optimization tasks sensitive to initial conditions outlined \cref{sec:optimizations}, the latter parameterization of \cref{eq:uniform_param} generally performed better that former \cref{eq:convex_param}.
     % \nocite{REVTEX41Control}
     % \nocite{apsrev41Control}
     \bibliography{references, revtex-custom-bib}
