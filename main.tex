@@ -1,7 +1,7 @@
 \documentclass[aps, 10pt, english, twoside, pra, nofootinbib, longbibliography]{revtex4-1}
 
 \usepackage{shared}
-\usepackage{xparse}
+% \usepackage{xparse}
 \usepackage{cleveref}
 
 % % === Required for matplotlib2tikz ===
@@ -634,9 +634,9 @@
     % \end{center}
     % \end{figure}
 
-    \begin{center}
-        \includegraphics{figures/example.pdf}
-    \end{center}
+    % \begin{center}
+    %     \includegraphics{figures/example.pdf}
+    % \end{center}
 
     \todo[TC]{Demonstrate Quantum, Convexity}
 
@@ -708,9 +708,9 @@
     \end{equation}
     Furthermore due to the periodicity of the parameter space $\lambda$, \cref{eq:convex_param} can be used for either constrained or unconstrained optimization problems.
 
-    Although non-degenerate, this parameterization suffers from uniformity; a randomly sampled vector of parameters $\lambda$ \textit{does not} translate to a randomly sampled probability $\prob[V]$. An easy to implement, degenerate parameterization of $\prob[V]$ can be constructed by simply beginning with $n$ real parameters $\lambda = \br{\lambda_1, \ldots, \lambda_n}$, then making them positive and normalized by their sum.
+    Although non-degenerate, this parameterization suffers from uniformity; a randomly sampled vector of parameters $\lambda$ \textit{does not} translate to a randomly sampled probability $\prob[V]$. An easy-to-implement, degenerate parameterization of $\prob[V]$ can be constructed by simply beginning with $n$ real parameters $\lambda = \br{\lambda_1, \ldots, \lambda_n}$, then making them positive and normalized by their sum\footnote{Strictly speaking, \cref{eq:uniform_param} \textit{also} suffers from non-uniformity; being biased toward uniform probability distributions $\prob[V]$. \todo[TC]{Discuss rejection sampling simplex algorithms}}.
     \[ p_j = \f{\abs{\lambda_j}}{\sum_{i=1}^{n} \abs{\lambda_i}} \quad \forall j \in 1, \ldots, n \eq \label{eq:uniform_param} \]
-    This retains the desired property that a uniformly sampled vector $\lambda_i \in \bs{0,1}$ induces a uniform sampling of distributions $\prob[V]$. For various convex optimization tasks sensitive to initial conditions outlined \cref{sec:optimizations}, the latter parameterization of \cref{eq:uniform_param} generally performed better that former \cref{eq:convex_param}.
+    For various convex optimization tasks sensitive to initial conditions outlined \cref{sec:optimizations}, the latter parameterization of \cref{eq:uniform_param} generally performed better that former \cref{eq:convex_param}.
     % \nocite{REVTEX41Control}
     % \nocite{apsrev41Control}
     \bibliography{references, revtex-custom-bib}
