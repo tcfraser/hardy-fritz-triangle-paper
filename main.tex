@@ -33,6 +33,8 @@
 \newcommand{\edges}{\mathcal{E}}
 \newcommand{\trans}{\mathcal{T}}
 \newcommand{\ind}{\mathcal{I}}
+\newcommand{\perm}{\Omega}
+\newcommand{\Hilb}{\mathcal{H}}
 
 \newcommand{\ancestralindep}{\perp}
 
@@ -45,6 +47,8 @@
 \setoperator{An}
 \setoperator{Sub}
 \setoperator{AnSub}
+\setoperator{Ext}
+\setoperator{Com}
 % \newcommand{\Pa}[2][]{{\mathsf{Pa}_{#1}\!}\br{#2}}
 
 \newcommand{\term}[1]{\textcolor{Mahogany}{\textbf{#1}}}
@@ -85,20 +89,21 @@
 
     \begin{definition}
         \label{def:extendable}
-        An outcome $\outc{V}$ is said to be \term{extendable} to an outcome $\outc{W}$ (where $V \subseteq W$) if there exists an outcome $\outc{W\setminus V}$ such that:
-        \[ \outc{W} = \outc{W\setminus V} \times \outc{V} \]
+        An outcome $\outc{V}$ is said to be \term{extendable} to an outcome $\outc{W}$ (where $V \subseteq W$) if there exists an outcome $\outc{W\setminus V}$ such that $\outc{W} = \outc{W\setminus V} \times \outc{V}$.
+        \[ \Ext{\outc{V} \to \outc{W}} \iff \exists \outc{W\setminus V} \mid \outc{W} = \outc{W\setminus V} \times \outc{V} \]
         The idea being that a \textit{less specific} outcome $\outc{V}$ can be made \textit{more specific} by assigning outcomes to the remaining random variables in $W \setminus V$. If such an outcome $\outc{W\setminus V}$ exists, it is unique.
     \end{definition}
 
     \begin{definition}
         The set of all extendable outcomes of $\outc{V}$ in $O_{W}$ is called the \term{extendable set} and can be written as,
-        \[ \outc{V} \times O_{W\setminus V} \defined \bc{\outc{W} \in O_{W} \mid \exists \outc{W\setminus V} : \outc{W\setminus V} \times \outc{V} = \outc{W}} \]
+        \[ \Ext[W]{\outc{V}} \defined \outc{V} \times O_{W\setminus V} \defined \bc{\outc{W} \in O_{W} \mid \Ext{\outc{V} \to \outc{W}}} \]
         The extendable set of $\outc{V}$ in $W$ is the set of all outcomes of $O_W$ that \textit{agree} with $\outc{V}$ about valuations for variables in $V$. In this language, two outcomes $\outc{V}$ and $\outc{W}$ are \term{compatible} if they are both extendable to some outcome $\outc{V \cup W}$. Equivalently, $\outc{V}$ and $\outc{W}$ agree on their valuations of $V \cap W$.
+        \[ \Com{\outc{V}, \outc{W}} \iff \exists \outc{V \cup W} \mid \Ext{\outc{V} \to \outc{V \cup W}}, \Ext{\outc{W} \to \outc{V \cup W}} \]
     \end{definition}
 
     \begin{example}
         Consider two sets of random variables $V = \bc{a, b}$ and $W = \bc{a, b, c}$. Clearly $V \subseteq W$; a prerequisite for extendability. Also take all individual outcome spaces to be finite and of order 3: $O_a = O_b = O_c = \bc{1,2,3}$. Then $\outc{V} = \outc{\bc{a,b}} = \br{a = 1, b = 2}$ is extendable to the outcome $\outc{W} = \br{a = 1, b = 2, c = 1}$, and the extendable set of $\outc{V}$ in $O_{W}$ is,
-        \[ \outc{\bc{a,b}} \times O_c = \bc{\br{a = 1, b = 2, c = 1}, \br{a = 1, b = 2, c = 2}, \br{a = 1, b = 2, c = 3}} \]
+        \[ \Ext[a,b,c]{a = 1, b = 2} = \bc{\br{a = 1, b = 2, c = 1}, \br{a = 1, b = 2, c = 2}, \br{a = 1, b = 2, c = 3}} \]
     \end{example}
 
     % \begin{definition}
@@ -196,7 +201,7 @@
     \todo[TC]{How many definitions do I need to write??}
 
     \section{Triangle Scenario}
-    \todo[TC]{Discuss the triangle scenario, previous work done on it, etc.}
+    \todo[TC]{Discuss the Triangle Scenario, previous work done on it, etc.}
     Focusing on the inflation depicted in \cref{fig:inflated_triangle_scenario}, we obtained the maximally pre-injectable sets through the procedure outlined in \cite{Inflation}.
     \begin{equation}
         \begin{gathered}
@@ -305,7 +310,7 @@
                 \end{scope}
             \end{tikzpicture}
             }
-            \caption{The casual structure of the triangle scenario. Three variables $A,B,C$ are observable and illustrated as triangles, while $X, Y, Z$ are latent variables illustrated as circles.}
+            \caption{The casual structure of the Triangle Scenario. Three variables $A,B,C$ are observable and illustrated as triangles, while $X, Y, Z$ are latent variables illustrated as circles.}
             \label{fig:triangle_scenario}
         \end{minipage}\hspace{0.04\textwidth}%
         \begin{minipage}[b]{.48\textwidth}
@@ -347,7 +352,7 @@
                 \end{scope}
             \end{tikzpicture}
             }
-            \caption{An inflated causal structure of the triangle scenario \cref{fig:triangle_scenario}.}
+            \caption{An inflated causal structure of the Triangle Scenario \cref{fig:triangle_scenario}.}
             \label{fig:inflated_triangle_scenario}
         \end{minipage}
     \end{center}
@@ -405,7 +410,9 @@
         \label{def:marginal_model}
         A reoccurring motif of these discussions will be the set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ mentioned in \cref{def:marginal_model}. In agreement with \cite{Fritz_2011} we will call this set of distributions a \term{marginal model} and denote it $\prob^\mathcal{M}$ provided that they are \textit{compatible}:
         \[ \forall i \neq j \text{ if } V_i \cap V_j \neq \emptyset \text{ then } \sum_{V_i \setminus V_j} \prob[V_i] = \sum_{V_j \setminus V_i} \prob[V_j]  \]
-        We call the set of subsets $\bc{V_1, \ldots, V_k}$ the marginal contexts or the \term{maximal marginal scenario} and an individual $V_i$ a \term{marginal context}. Finally we will denote the union of all contexts $\mathcal{V}$ and define it exactly as in \cref{eq:marginals_union}
+        We call the set of subsets $\bc{V_1, \ldots, V_k}$ the marginal contexts or the \term{maximal marginal scenario} \todo[TC]{Clarify maximal} and an individual $V_i$ a \term{marginal context}. Finally we will denote the union of all contexts $\mathcal{V}$ and define it exactly as in \cref{eq:marginals_union}. In addition, we elect to define the \term{marginal outcomes} $O^\mathcal{M}$ to be the set of all outcomes belonging to outcomes of the marginal contexts.
+        \[ O^\mathcal{M} \defined O_{V_1} \cup \cdots \cup O_{V_k} = \bigcup_{j=1}^{k} O_{V_j} \]
+        Note that $O^\mathcal{M}$ is \textit{not} a valid outcome space, analogous to the fact that $P^\mathcal{M}$ is \textit{not} a probability distribution. Instead $O^\mathcal{M}$ is a collection of outcome spaces just as $P^\mathcal{M}$ is a collection of distributions.
     \end{definition}
 
     \todo[TC]{Discuss Compatibility, connection to cooperative games/resources, bell incompatibility?}
@@ -413,7 +420,7 @@
     \todo[TC]{Discuss what is meant by a `complete' solution to the marginal problem}
     \todo[TC]{Maybe define the possibilistic marginal problem for later}
     \section{The Fritz Distribution}
-    The \textbf{Fritz distribution} $P_F$ is a quantum-accessible distribution known to be incompatible with the triangle scenario. Explicitly, $P_F$ is a three-party ($A,B,C$), four-outcome ($1,2,3,4$) distribution that has form as follows:
+    The \textbf{Fritz distribution} $P_F$ is a quantum-accessible distribution known to be incompatible with the Triangle Scenario. Explicitly, $P_F$ is a three-party ($A,B,C$), four-outcome ($1,2,3,4$) distribution that has form as follows:
     \begin{align*}
     \prob[F][111] = \prob[F][221] = \prob[F][412] = \prob[F][322] = \prob[F][233] = \prob[F][143] = \prob[F][344] = \prob[F][434] &= \f{1}{32}\br{2 + \sqrt{2}} \\
     \prob[F][121] = \prob[F][211] = \prob[F][422] = \prob[F][312] = \prob[F][243] = \prob[F][133] = \prob[F][334] = \prob[F][444] &= \f{1}{32}\br{2 - \sqrt{2}}
@@ -443,12 +450,12 @@
     \subsection{Casting the Inflated Marginal Problem as a Linear Program}
     After obtaining the maximal pre-injectable sets associated with a particular inflation, one can write the marginal problem of \cref{def:marginal_problem} as a linear program. The key observation is that marginalization is a \textit{linear} operator that can be performed via a matrix multiplication. To do this, we will define the \textit{marginalization matrix}.
     \begin{definition}
-        The \term{marginalization matrix} $M$ for a marginal scenario $\bc{V_1, \dots, V_k}$ is a bit-wise matrix where the columns are indexed by \textit{joint} outcomes $\outc{\mathcal{V}} \in O_{\mathcal{V}}$ and the rows are indexed by \textit{marginal} outcomes corresponding to all outcomes $\outc{V_i} \in O_{V_i}$ of the marginal contexts $V_i$. The entries of $M$ are populated whenever a row index is extendable to a column index.
+        The \term{marginalization matrix} $M$ for a marginal scenario $\bc{V_1, \dots, V_k}$ is a bit-wise matrix where the columns are indexed by \textit{joint} outcomes $\outc{\mathcal{V}} \in O_{\mathcal{V}}$ and the rows are indexed by \textit{marginal} outcomes corresponding to all outcomes $\outc{V_i} \in O_{V_i} \subseteq O^{\mathcal{M}}$. The entries of $M$ are populated whenever a row index is extendable to a column index.
         \[ M_{\br{o\bs{V_i}, o\bs{\mathcal{V}}}} = \begin{cases}
-            1 & \exists \outc{\mathcal{V} \setminus V_i} \text{ such that } \outc{V_i} \times \outc{\mathcal{V} \setminus V_i} = \outc{\mathcal{V}} \\
+            1 & \Ext{\outc{V_i} \to \outc{\mathcal{V}}} \\
             0 & \text{otherwise}
         \end{cases} \]
-        The marginalization matrix has $\abs{O_\mathcal{V}}$ columns and $\sum_{i=1}^{k} \abs{O_{V_i}}$ rows. The number of non-zero entries of $M$ is a simple expression,
+        The marginalization matrix has $\abs{O_\mathcal{V}}$ columns and $\abs{O^{\mathcal{M}}} = \sum_{i=1}^{k} \abs{O_{V_i}}$ rows. The number of non-zero entries of $M$ is a simple expression,
         \[ \sum_{i=1}^{k} \abs{O_{V_i}}\abs{O_{\mathcal{V} \setminus V_i}} = \sum_{i=1}^{k} \abs{O_{\mathcal{V}}} = k\abs{O_{\mathcal{V}}} \]
         Each of the $k$ elements of $\bc{V_1, \ldots, V_k}$ contributes a single non-zero entry to each column of $M$, resulting in $k\abs{O_\mathcal{V}}$ total non-zero entries.
 
@@ -477,8 +484,8 @@
         \[ \probvec[\mathcal{V}]^\intercal = \bs{\prob[\mathcal{V}][\outc{\mathcal{V}}]}_{o\bs{\mathcal{V}} \in O_{\mathcal{V}}} \]
     \end{definition}
     \begin{definition}
-        The \term{marginal distribution vector} $\probvec[\bc{V_1, \ldots, V_k}]$ for a marginal model $\bc{P_{V_1}, \ldots, P_{V_k}}$ is the vector whose entries are probabilities over the set of \term{marginal outcomes} $\bigcup_{j=1}^{k} O_{V_j}$. $\probvec[\bc{V_1, \ldots, V_k}]$ shares the same indices as the \textit{row} indices of $M$.
-        \[ \probvec[\bc{V_1, \ldots, V_k}]^\intercal = \bs{\prob[V_i][\outc{V_i}] }_{o\bs{V_i} \in \bigcup_{j=1}^{k} O_{V_j}} \]
+        The \term{marginal distribution vector} $\probvec[\bc{V_1, \ldots, V_k}]$ for a marginal model $\bc{P_{V_1}, \ldots, P_{V_k}}$ is the vector whose entries are probabilities over the set of marginal outcomes $O^{\mathcal{M}}$. $\probvec[\bc{V_1, \ldots, V_k}]$ shares the same indices as the \textit{row} indices of $M$.
+        \[ \probvec[\bc{V_1, \ldots, V_k}]^\intercal = \bs{\prob[V_i][\outc{V_i}] }_{o\bs{V_i} \in O^{\mathcal{M}}} \]
     \end{definition}
     The marginal and joint distribution vectors are related via the marginalization matrix $M$. Given a joint distribution vector $\probvec[\mathcal{V}]$ one can obtain the marginal distribution vector $\probvec[\bc{V_1, \ldots, V_k}]$ by multiplying $M$ by $\probvec[\mathcal{V}]$.
     \[ \probvec[\bc{V_1, \ldots, V_k}] = M \cdot \probvec[\mathcal{V}] \eq \label{eq:marginal_problem_matrix} \]
@@ -515,7 +522,7 @@
     \comment[TC]{\href{http://web.stanford.edu/~ashishg/msande111/notes/chapter4.pdf}{Farkas's lemma} here?}
 
     \begin{definition} An \term{infeasibility certificate} is any vector $y$ that satisfies the constraints of \cref{def:dual_marginal_linear_program} and also permits violation of \cref{eq:dual_marginal_ineq} for some marginal distribution vector $\probvec[\bc{V_1, \ldots, V_k}]$.
-    \[ y \in \R^{\sum_{i=1}^{k} \abs{O_{V_i}}} : y \cdot M \succeq 0, \quad y \cdot \probvec[\bc{V_1, \ldots, V_k}] < 0 \]
+    \[ y \in \R^{\abs{O^{\mathcal{M}}}} : y \cdot M \succeq 0, \quad y \cdot \probvec[\bc{V_1, \ldots, V_k}] < 0 \]
     Furthermore, any $y$ satisfying $y \cdot M \succeq 0$ induces a \term{certificate inequality} that constraints the space of marginal distribution vectors which takes the symbolic form of \cref{eq:dual_marginal_ineq},
     \[ y \cdot \probvec[\bc{V_1, \ldots, V_k}] \geq 0 \]
     Where the entries of the certificate $y$ act as coefficients for the entries of $\probvec[\bc{V_1, \ldots, V_k}]$.
@@ -538,15 +545,15 @@
     \todo[TC]{Motivate why certificates are not enough, want many solutions}
     \subsection{Logical Implications \& Inequalities}
     Following the work conducted by Mansfield and Fritz \cite{Mansfield_2012}, we consider a possibilistic implications of the \term{$(1,n)$-type} to be all implications of the form,
-    \[ A \implies C_1 \lor \cdots \lor C_n = \bigvee_{i=1}^{n} C_i \eq \label{eq:1n_pi}\]
-    Where $A$ and each of the $C_i$'s are simply events or outcomes of a particular set of variables. The letter `$A$' is chosen for the event $A$ since it takes the place of the logical \term{antecedent} of \cref{eq:1n_pi}. Likewise, the letter `$C$' is chosen to represent logical \term{consequents}. We refer to the set of all $C_i$'s simply as $C = \bc{C_i \mid i \in 1, \ldots, n}$. The implication \cref{eq:1n_pi} can be read as \textit{whenever $A$ occurs, at least one element of $C$ also occurs}.
+    \[ a \implies c_1 \lor \cdots \lor c_n = \bigvee_{i=1}^{n} c_i \eq \label{eq:1n_pi}\]
+    Where $a$ and each of the $c_i$'s are simply events or outcomes of a particular set of variables. The letter `$a$' is chosen for the event $a$ since it takes the place of the logical \term{antecedent} of \cref{eq:1n_pi}. Likewise, the letter `$c$' is chosen to represent logical \term{consequents}. We refer to the set of all $c_i$'s simply as $C = \bc{c_i \mid i \in 1, \ldots, n}$. The implication \cref{eq:1n_pi} can be read as \textit{whenever $a$ occurs, at least one element of $c$ also occurs}.
 
     It is possible to turn possibilistic $(1,n)$-type implications into probabilistic inequalities by recognizing that the logical implication of \cref{eq:1n_pi} induces the inequality,
-    \[ \prob[][A] \leq \prob[][\bigvee_{i=1}^{n} C_i] \]
+    \[ \prob[][a] \leq \prob[][\bigvee_{i=1}^{n} c_i] \]
     Furthermore utilizing Boole's inequality,
-    \[ \prob[][\bigvee_{i=1}^{n} C_i] \leq \sum_{i=1}^{n} \prob[][C_i] \eq \label{eq:booles} \]
+    \[ \prob[][\bigvee_{i=1}^{n} c_i] \leq \sum_{i=1}^{n} \prob[][c_i] \eq \label{eq:booles} \]
     Gives,
-    \[ \prob[][A] \leq \sum_{i=1}^{n} \prob[][C_i] \eq \label{eq:1n_ineq} \]
+    \[ \prob[][a] \leq \sum_{i=1}^{n} \prob[][c_i] \eq \label{eq:1n_ineq} \]
     Such that whenever the inequality \cref{eq:1n_ineq} is violated, the implication in \cref{eq:1n_pi} is violated as well. Note that the converse is \textit{not} true; if the inequality \cref{eq:1n_ineq} holds true, it is still possible for there to be a violation of \cref{eq:1n_pi}.
 
     \begin{remark}
@@ -557,34 +564,31 @@
 
     The question then remains, \textit{how does non-contextuality give rise to implications of the form of \cref{eq:1n_pi}?} We begin by making the principle assumption that a joint distribution \textit{does} exist for a family of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$. We can then derive logical \textit{tautologies} under this assumption that are of $\br{1,n}$-type, which we call \term{marginal implications}, using the following train of logic.
     \begin{enumerate}
-        \item Suppose a particular marginal outcome $A \in \bigcup_{i=1}^{k} O_{V_i}$ happens to occur. For reference, take $A = \outc{V_j} \in O_{V_j}$ to belong to the outcome space of $V_j$ for some index $j$.
-        \item Since a joint distribution exists, then $A$ refers to some \textit{incomplete} knowledge about some \textit{joint} event $J$ that actually occured. In fact, $J$ is required to belong to the extendable set of $A$ in $O_{\mathcal{V}}$.
-        \[ J \in A \times O_{\mathcal{V} \setminus V_j} \]
-        \item Therefore whenever $A$ occurs, one of the elements $J$ of $A \times O_{\mathcal{V} \setminus V_j}$ \textit{has} to occur.
-        \[ A \implies J_1 \vee \cdots \vee J_l = \bigvee_{J \in A \times O_{\mathcal{V} \setminus V_j}} J \eq \label{eq:A_impies_extendable}\]
-        \item Now suppose we could obtain a set of marginal outcomes $C = \bc{C_1, \ldots, C_n}$ each different from $A$ such that every $J$ is in the extendable set of at least one element $C$. If such a $C$ can be found, then the possibility of at least one $J$ occurring implies the possibility of at least one $C$ occurring.
-        \[ J_1 \vee \cdots \vee J_l \implies C_1 \vee \cdots \vee C_n \eq \label{eq:extendable_implies_cover} \]
+        \item Suppose a particular marginal outcome $a \in O^{\mathcal{M}}$ happens to occur.
+        \item Since a joint distribution exists, then $a$ refers to some \textit{incomplete} knowledge about a \textit{joint} event $j = \outc{\mathcal{V}} \in O_{\mathcal{V}}$ that actually occured. More precisely, this set of possible $j$'s is the extendable set of $a$ in $O_{\mathcal{V}}$.
+        \[ j \in \Ext[\mathcal{V}]{a} \]
+        \item Therefore whenever $a$ occurs, one of the elements $j$ of $\Ext[\mathcal{V}]{a}$ \textit{has} to occur.
+        \[ a \implies \bigvee_{j \in \Ext[\mathcal{V}]{a}} j \eq \label{eq:A_impies_extendable}\]
+        \item Now suppose we could obtain a set of marginal outcomes $C = \bc{c_1, \ldots, c_n}$ each different from $a$ such that for every $j$, $\Ext{c \to j}$ for at least one element $c \in C$. If such a $C$ can be found, then the possibility of at least one $j$ occurring implies the possibility of at least one $c$ occurring.
+        \[ \bigvee_{j \in \Ext[\mathcal{V}]{a}} j \implies c_1 \vee \cdots \vee c_n = \bigvee_{i = 1}^{k} c_i\eq \label{eq:extendable_implies_cover} \]
 
         \item Combing \cref{eq:A_impies_extendable} with \cref{eq:extendable_implies_cover}, one obtains \cref{eq:1n_pi}.
     \end{enumerate}
 
     \todo[TC]{Talk about why this is called hardy paradox}
 
-    Finding all marginal implications for a chosen marginal outcome $A$ corresponds to finding a set of marginal outcomes $C = \bc{C_1, \ldots, C_n}$ whose extendable sets \textit{cover} the extendable set of $A$. Formally this corresponds to a \term{set covering} problem \todo[TC]{cite} which we elected to cast as the equivalent \term{hypergraph transversal problem}.
+    Finding all marginal implications for a chosen marginal outcome $a$ corresponds to finding a set of marginal outcomes $C = \bc{c_1, \ldots, c_n}$ whose extendable sets \textit{cover} $\Ext[\mathcal{V}]{a}$. Formally this corresponds to a \term{set covering} problem \todo[TC]{cite} which we elected to cast as the equivalent \term{hypergraph transversal problem}.
 
     \todo[TC]{Mention sufficient solution to the possibilistic marginal problem}
     \todo[TC]{Illustrate how it can distinguish more than possibilistic differences}
 
-    Given an antecedent $A$, we can construct a hypergraph $\hgraph_{A}$ with nodes $\nodes_A$ and $\edges_A$. The edges are labeled by outcomes in $A$'s extendable set $A \times O_{\mathcal{V} \setminus V_j}$, namely $\outc{\mathcal{V}}$, and contain all marginal outcomes compatible with $\outc{\mathcal{V}}$. The nodes are the subset of marginal outcomes compatible with $A$; equivalently the union of all edges.
-    \todo[TC]{Notation for compatible and extendable?}
-    \[ \edges_A = \bc{\outc{\mathcal{V}} \mid \outc{\mathcal{V}} \in A \times O_{\mathcal{V} \setminus V_j}} \]
-
-    The nodes are all marginal outcomes $C$ compatible with $A$.
-    \[ \nodes_A = \bc{n \in \bigcup_{i=1}^{k} O_{V_i} \mid n \neq A, n   } \]
-    And edges $\edges_A$ labeled by elements of $A$'s extendable set $\outc{\mathcal{V} \setminus V_j} \times$
-
-
-
+    Given an antecedent $a$, we can construct a hypergraph $\hgraph_{a}$ with nodes $\nodes_a$ and $\edges_a$. The nodes of this hypergraph are the subset of marginal outcomes $\nodes_a \subseteq O^{\mathcal{M}}$ \textit{compatible} with $a$.
+    \[ \nodes_a = \bc{n \in O^{\mathcal{M}} \mid \Com{n, a}} \eq \label{eq:hgraph_nodes}\]
+    The edges are labeled by outcomes in $\Ext[\mathcal{V}]{a} \subseteq O_{\mathcal{V}}$, namely the set of $j$'s, and contain all nodes compatible with $j$.
+    \[ \edges_a = \bc{\bc{n \in O^{\mathcal{M}} \mid \Com{n, j}} \mid j \in \Ext[\mathcal{V}]{A}} \eq \label{eq:hgraph_edges} \]
+    \begin{remark}
+        Note that every node is contained in some edge. To demonstrate this, consider the definition of compatibility between outcomes. If every $n$ is compatible with $a$, then there exists some outcome $j \in \Ext[\mathcal{V}]{A}$ such that $\Ext{a \to j}$ and $\Ext{n \to j}$. If $\Ext{n \to j}$ then $\Com{n, j}$ satisfying the central condition of \cref{eq:hgraph_edges}.
+    \end{remark}
 
     \todo[TC]{Discuss $(m,n)-type$ implications and the non-triviality}
     \todo[TC]{Link to logical bell inequalities/completeness or not?}
@@ -607,40 +611,32 @@
     \label{sec:optimizations}
     Compatibility inequalities for a given causal structure are fantastic for finding incompatible distributions. In the inflation technique, this is no exception. Parameterizing a space distributions using a set of real-valued parameters $\lambda$, enables us to perform numerical optimizations against these inequalities in hopes that a particular set of parameters $\lambda$ is able to generate an incompatible distribution $\prob$. To illustrate this generic procedure and it's reliability, we will first examine the popular CHSH inequality.
     \subsection{Numerical Violations of The CHSH Inequality}
-    The CHSH inequality \cite{CHSH_Original} can we viewed as a causal compatibility inequality for iconic the Bell Scenario (Fig. 19 of \cite{Wood_2012}, Fig. 11 of \cite{Inflation}, Fig. 1 a) of \cite{Tavakoli_2015}, etc.) corresponding to Bell's notion of local causality \cite{Wood_2012}. It constrains the set of 2-outcome bipartite distributions over local binary measurement settings for each party $\prob[AB\mid S_A S_B] \defined \bc{\prob[AB\mid 0 0], \prob[AB\mid 01], \prob[AB\mid 10], \prob[AB\mid 11]}$. Numerical optimization \textit{should} obtain the algebraic violation associated with the PR-Box correlations \cite{PR_1995}. Maintaining full generality, we simply need to parameterize these $4$ distributions using \cref{eq:uniform_param}, each requiring $4$ real-valued parameters.
+    The CHSH inequality \cite{CHSH_Original} can we viewed as a causal compatibility inequality for iconic the Bell Scenario (Fig. 19 of \cite{Wood_2012}, Fig. 11 of \cite{Inflation}, Fig. 1 a) of \cite{Tavakoli_2015}, etc.) corresponding to Bell's notion of local causality \cite{Wood_2012}. It constrains the set of 2-outcome bipartite distributions over local binary measurement settings for each party $\prob[AB\mid S_A S_B] \defined \bc{\prob[AB\mid 0 0], \prob[AB\mid 01], \prob[AB\mid 10], \prob[AB\mid 11]}$. Numerical optimization \textit{should} obtain the algebraic violation associated with the PR-Box correlations \cite{PR_1995}. Maintaining full generality, we simply need to parameterize these $4$ distributions using \cref{eq:uniform_param}, each requiring $4$ real-valued parameters. We define the optimization target for the CHSH inequality to be the left-hand-side of \cref{eq:CHSH},
+    \[ \mathcal{I}\tsb{CHSH} = \ba{AB|11} + \ba{AB|12} + \ba{AB|21} - \ba{AB|22} \]
+    Figure \ref{fig:CHSH_convex} demonstrates this optimization for $5$ random seed parameters $\lambda_0$, each converging to the expected value of $4$. Analogously, \cite{Cirelson_1980}
 
-    % \begin{figure}
-    % \newlength\figureheight
-    % \newlength\figurewidth
-    % \setlength\figureheight{2.7in}
-    % \setlength\figurewidth{.48\textwidth}
-    % \begin{center}
-    %     \begin{minipage}[b]{.48\textwidth}
-    %         \centering
-    %         \scalebox{1.0}{%
-    %             \input{figures/example.pgf}
-    %         }
-    %         \caption{Caption 1}
-    %         \label{fig:fig1}
-    %     \end{minipage}\hspace{0.04\textwidth}%
-    %     \begin{minipage}[b]{.48\textwidth}
-    %         \centering
-    %         \scalebox{1.0}{%
-    %             \input{figures/CHSH_convex}
-    %         }
-    %         \caption{Caption 2}
-    %         \label{fig:fig2}
-    %     \end{minipage}
-    % \end{center}
-    % \end{figure}
-
-    % \begin{center}
-    %     \includegraphics{figures/example.pdf}
-    % \end{center}
+    \begin{figure}
+    \newlength\figureheight
+    \newlength\figurewidth
+    \setlength\figureheight{2.7in}
+    \setlength\figurewidth{.48\textwidth}
+    \begin{center}
+        \begin{minipage}[b]{.48\textwidth}
+            \centering
+            \includegraphics{figures/CHSH_convex.pdf}
+            \caption{Convex optimizations against $\mathcal{I}\tsb{CHSH}$ recover algebraic violation of $4$.}
+            \label{fig:CHSH_convex}
+        \end{minipage}\hspace{0.04\textwidth}%
+        \begin{minipage}[b]{.48\textwidth}
+            \centering
+            \includegraphics{figures/CHSH_quantum.pdf}
+            \caption{Quantum optimizations against $\mathcal{I}\tsb{CHSH}$ recover maximum violation of $2\sqrt{2}$.}
+            \label{fig:CHSH_quantum}
+        \end{minipage}
+    \end{center}
+    \end{figure}
 
     \todo[TC]{Demonstrate Quantum, Convexity}
-
-
     \todo[TC]{Why Inequalities are great for optimizations}
     \todo[TC]{Non-linearity}
     \todo[TC]{Techniques Used}
@@ -656,7 +652,7 @@
     \section{Conclusions}
     \todo[TC]{Inflation technique allows one to witness fritz incompatibility}
     \todo[TC]{Linear optimization induces certificates which are incompatibility witnesses}
-    \todo[TC]{There are quantum distributions in the triangle scenario that are incompatible and different from fritz in terms of entanglement but not possibilistic structure}
+    \todo[TC]{There are quantum distributions in the Triangle Scenario that are incompatible and different from fritz in terms of entanglement but not possibilistic structure}
     \section{Open Questions \& Future Work}
     \todo[TC]{Lots of stuff}
     \appendix
@@ -668,35 +664,57 @@
     and the $\si_{m,n}$ are generalized anti-symmetric $\si$-matrices,
     \[ \sigma_{m,n} = -i \ket{m}\bra{n} +i \ket{n}\bra{m} \]
     Where $1 \leq m < n \leq d$.
-    For the sake of reference, let us label the matrix exponential terms in \cref{eq:spengler_unitary} in a manner that corresponds to their affect on a orthonormal basis $\bc{\ket{1}, \ldots, \ket{d}}$.
+    For the sake of reference, let us label the matrix exponential terms in \cref{eq:spengler_unitary} in a manner that corresponds to their affect on an orthonormal basis $\bc{\ket{1}, \ldots, \ket{d}}$.
     \begin{align}
     \begin{split}
         GP_l &= \exp\br{iP_l \lambda_{l,l}} \\
         RP_{n,m} &= \exp\br{i P_n \lambda_{n,m}} \\
-        R_{n,m} &= \exp\br{i \si_{m,n} \lambda_{m,n}}
+        R_{m,n} &= \exp\br{i \si_{m,n} \lambda_{m,n}}
     \end{split} \eq \label{eq:exp_terms}
     \end{align}
     It is possible to remove the reliance on matrix exponential operations in \cref{eq:spengler_unitary} by utilizing the explicit form of the exponential terms in \cref{eq:exp_terms}. As a first step, recognize the defining property of the projective operators \cref{eq:projective_operator},
     \[ P_l^k = \br{\ket{l}\bra{l}}^k = \ket{l}\bra{l} = P_l \]
     This greatly simplifies the global phase terms $GP_l$,
-    \[ GP_l = \exp\br{iP_l \lambda_{l,l}} = \sum_{k=0}^{\inf} \f{\br{iP_l \lambda_{l,l}}^k}{k!} = \mathbb{I} + \sum_{k=1}^{\inf} \f{\br{i \lambda_{l,l}}^k}{k!}P_l^k = \mathbb{I} + P_l \bs{\sum_{k=1}^{\inf} \f{\br{i \lambda_{l,l}}^k}{k!}} = \mathbb{I} + P_l \br{e^{i \lambda_{l,l}} - 1} \]
+    \[ GP_l = \exp\br{iP_l \lambda_{l,l}} = \sum_{k=0}^{\inf} \f{\br{iP_l \lambda_{l,l}}^k}{k!} = \mathbb{I} + \sum_{k=1}^{\inf} \f{\br{i \lambda_{l,l}}^k}{k!}P_l^k = \mathbb{I} + P_l \bs{\sum_{k=1}^{\inf} \f{\br{i \lambda_{l,l}}^k}{k!}} = \mathbb{I} + P_l \br{e^{i \lambda_{l,l}} - 1} \eq \label{eq:unitary_GP} \]
     Analogously for the relative phase terms $RP_{n,m}$,
-    \[ RP_{n,m} = \cdots = \mathbb{I} + P_n \br{e^{i \lambda_{n,m}} - 1} \]
-    Finally, the rotation terms $R_{n,m}$ can also be simplified by examining powers of $i \sigma_{n,m}$,
-    \[ R_{n,m} = \exp\br{i \si_{m,n} \lambda_{m,n}} = \sum_{k=0}^{\inf} \f{\br{\ket{m}\bra{n} - \ket{n}\bra{m}}^k \lambda_{m,n}^k}{k!} \]
+    \[ RP_{n,m} = \cdots = \mathbb{I} + P_n \br{e^{i \lambda_{n,m}} - 1} \eq \label{eq:unitary_RP} \]
+    Finally, the rotation terms $R_{m,n}$ can also be simplified by examining powers of $i \sigma_{n,m}$,
+    \[ R_{m,n} = \exp\br{i \si_{m,n} \lambda_{m,n}} = \sum_{k=0}^{\inf} \f{\br{\ket{m}\bra{n} - \ket{n}\bra{m}}^k \lambda_{m,n}^k}{k!} \]
     One can verify that the following properties hold,
     \begin{align*}
         \br{\ket{m}\bra{n} - \ket{n}\bra{m}}^0 &= \mathbb{I} \\
         \forall k \in \N, k \neq 0 : \br{\ket{m}\bra{n} - \ket{n}\bra{m}}^{2k} &= \br{-1}^k\br{\ket{m}\bra{m} + \ket{n}\bra{n}} \\
         \forall k \in \N : \br{\ket{m}\bra{n} - \ket{n}\bra{m}}^{2k+1} &= \br{-1}^k\br{\ket{m}\bra{n} - \ket{n}\bra{m}}
     \end{align*}
-    Revealing the simplified form of $R_{n,m}$,
-    \[ R_{n,m} = \mathbb{I} + \br{\ket{m}\bra{m} + \ket{n}\bra{n}} \sum_{j=1}^{\inf} \br{-1}^j\f{\lambda_{n,m}^{2j}}{\br{2j}!} + \br{\ket{m}\bra{n} - \ket{n}\bra{m}} \sum_{j=0}^{\inf} \br{-1}^j\f{\lambda_{n,m}^{2j+1}}{\br{2j+1}!} \]
-    \[ R_{n,m} = \mathbb{I} + \br{\ket{m}\bra{m} + \ket{n}\bra{n}} \br{\cos\lambda_{n,m} - 1} + \br{\ket{m}\bra{n} - \ket{n}\bra{m}} \sin\lambda_{n,m} \]
+    Revealing the simplified form of $R_{m,n}$,
+    \[ R_{m,n} = \mathbb{I} + \br{\ket{m}\bra{m} + \ket{n}\bra{n}} \sum_{j=1}^{\inf} \br{-1}^j\f{\lambda_{n,m}^{2j}}{\br{2j}!} + \br{\ket{m}\bra{n} - \ket{n}\bra{m}} \sum_{j=0}^{\inf} \br{-1}^j\f{\lambda_{n,m}^{2j+1}}{\br{2j+1}!} \]
+    \[ R_{m,n} = \mathbb{I} + \br{\ket{m}\bra{m} + \ket{n}\bra{n}} \br{\cos\lambda_{n,m} - 1} + \br{\ket{m}\bra{n} - \ket{n}\bra{m}} \sin\lambda_{n,m} \eq \label{eq:unitary_R} \]
+    By combining the optimizations of \cref{eq:unitary_RP,eq:unitary_R,eq:unitary_GP} together we arrive at an equivalent form for \cref{eq:spengler_unitary} that is computational more efficient.
+    \[ U = \bs{\prod_{m=1}^{d-1} \br{\prod_{n=m+1}^{d} RP_{n,m}R_{m,n}}} \cdot \bs{\prod_{l=1}^{d} GP_l} \eq \label{eq:fast_spengler_unitary} \]
     \todo[TC]{Explanation of Computational Complexity $\mathcal{O}\br{d^3}$ vs. $\mathcal{O}\br{1}$ using \cite{Moler_2003}}
     \todo[TC]{Pre-Caching for Fixed dimension $d$}
 
     \section{Parametrization of Quantum States \& Measurements}
+    Throughout \cref{sec:optimizations}, we utilize a variety of parameterizations of quantum states and measurements in order to generate quantum-accessible probability distributions. There are numerous techniques that can used when parameterizing quantum states and measurements \cite{Petz_2015, Hedemann_2013,Spengler_2010_Unitary,Fujii_2005,James_2001} with applications \todo[TC]{Finish this sentence}. For our purposes, we need to parameterize the space of quantum-accessible distributions $\prob[\mathcal{Q}]$ that are \textit{realized} on the Triangle Scenario. We have implemented $\prob[\mathcal{Q}]$ under the following description.
+    \[ \prob[ABC\mid \rho]\br{abc} = \Tr\bs{\Omega^\intercal \rho \Omega M^{abc}} \defined \Tr\bs{\Omega^\intercal \rho_{AB}\otimes\rho_{BC}\otimes\rho_{CA} \Omega M^a_{A}\otimes M^b_{B} \otimes M^c_{C}} \eq \label{eq:triangle_quantum_distributions} \]
+
+    \subsection{Quantum States}
+    The bipartite states $\br{\rho_{AB}, \rho_{BC}, \rho_{CA}}$ of \cref{eq:triangle_quantum_distributions} were taken to be two-qubit density matrices acting on $\Hilb^2 \otimes \Hilb^2$.\footnote{We also considered qutrit $\Hilb^3$ qutit $\Hilb^4$ states. However for $6$ $d$-dimensional $\Hilb^d$ states, the joint density matrix $\rho$ acts on $\br{\Hilb^d}^{\otimes 6}$ making it a $\br{d^6, d^6}$ matrix with $d^{12}$ entries. Computationally only $d = 2$ was feasible for our optimization tasks.} The space of all such states corresponds to the space of all $4\times 4$ positive semi-definite hermitian matrices with unitary trace. There are three distinct techniques that we have considered.
+
+    Taking inspiration from \cite{James_2001}, we can parameterize all such density matrices $\rho$ using \term{Cholesky Parametrization} \cite{Grasmair_2014}. The Cholesky decomposition allows one to write any hermitian positive semi-definite matrix $\rho$ in terms of a lower (or upper) triangular matrix $T$ using $\rho = T^\dagger T$. Our Cholesky parameterization consists of assigning $16$ real-valued parameters $\lambda$ to the entires of $T$ and generating a unitary trace $\rho$ similar to eq. (4.4) of \cite{James_2001}.
+    \[ \rho = \f{T^\dagger T}{\Tr\br{T^\dagger T}} \quad T = \pmtrx{\la_{1}&0&0&0\\\la_{2} + i \la_{3}&\la_{4}&0&0\\\la_{5} + i \la_{6}&\la_{7} + i \la_{8}&\la_{9}&0\\\la_{10} + i \la_{11}&\la_{12} + i \la_{13}&\la_{14} + i \la_{15}&\la_{16}} \eq \label{eq:cholesky_param} \]
+    Our deviation from exclusiving using \cref{eq:cholesky_param} is two-fold. First, \cref{eq:cholesky_param} is degenerate in that the normalization indicates only $16 - 1 = 15$ parameters are required for fully generic parameterization of all such states $\rho$. Removing this degeneracy is possible although difficult. Second, the parameters $\lambda_i$ carry no physical meaning associated with the state $\rho$, unlike our next parameterization.
+
+    In Spengler, Huber and Hiesmayr's work \cite{Spengler_2010_Unitary}, they discuss how to parameterization density matrices $\rho$ acting on $\Hilb^d$ of rank $k$ through it's spectral decomposition,
+    \[ \rho = \sum_{i=1}^{k} p_i \ket{\psi_i}\bra{\psi_i} \quad p_i \geq 0, \sum_{i} p_i = 1, k \leq d \eq \label{eq:unitary_param_density} \]
+    Where any orthonormal basis $\bc{\ket{\psi_i}}$ of $\Hilb^d$ can be transformed into a computational basis $\bc{\ket{i}}$ by a unitary $U \in \mathcal{U}\br{d}$ such that $\ket{\psi_i} = U\ket{i}$. We refer to \cref{eq:unitary_param_density} as the \term{Spengler Parametrization}. Without loss of generality we parameterize all full-rank ($k=d$) matrices by simultaneously parameterizing the $d=4$ eigenvalues $p_i$ of \cref{eq:unitary_param_density} using \cref{eq:convex_param} and the unitary group $\mathcal{U}\br{4}$.
+
+
+    \subsection{Measurements}
+    $\Omega$ represents a permutation matrix to be discussed below. $\rho_{AB}$ is the quantum state between party $A$ and $B$ and is represented by a generic density matrix operator acting on $\Hilb^2$
+
+    \subsection{Network Permutation Matrix}
+
     \section{Convex Parametrization of Finite Probability Distributions}
     As discussed in \cref{sec:optimizations}, there is a need to parameterize the family of all probability distributions $\prob[V]$ over a given set of variables $V = \br{v_1, \ldots, v_{\abs{V}}}$. If the cardinality of $O_{V}$ is finite, then this computationally feasible. The space of probability distributions over $n = \abs{O_{V}}$ distinct outcomes forms a $n-1$ dimensional convex polytope naturally embedded in $\R_{\geq 0}^n$ \cite{Brunner_2013} that is parameterizable by $n-1$ real value parameters; normalization $\sum_{o\bs{V} \in O_V} \prob[V][\outc{V}] = 1$ accounts for the `$-1$'. An example of a non-degenerate parameterization of $\prob[V]$ consists of $n-1$ parameters $\lambda = \br{\lambda_1, \ldots, \lambda_{n-1}}, \lambda_i \in \bs{0, \pi/2}$ which generate the probabilities $n$ probability values $p_j$ using hyperspherical coordinates \cite{Hedemann_2013, Spengler_2010_Unitary},
     \begin{equation}
@@ -710,8 +728,10 @@
 
     Although non-degenerate, this parameterization suffers from uniformity; a randomly sampled vector of parameters $\lambda$ \textit{does not} translate to a randomly sampled probability $\prob[V]$. An easy-to-implement, degenerate parameterization of $\prob[V]$ can be constructed by simply beginning with $n$ real parameters $\lambda = \br{\lambda_1, \ldots, \lambda_n}$, then making them positive and normalized by their sum\footnote{Strictly speaking, \cref{eq:uniform_param} \textit{also} suffers from non-uniformity; being biased toward uniform probability distributions $\prob[V]$. \todo[TC]{Discuss rejection sampling simplex algorithms}}.
     \[ p_j = \f{\abs{\lambda_j}}{\sum_{i=1}^{n} \abs{\lambda_i}} \quad \forall j \in 1, \ldots, n \eq \label{eq:uniform_param} \]
-    For various convex optimization tasks sensitive to initial conditions outlined \cref{sec:optimizations}, the latter parameterization of \cref{eq:uniform_param} generally performed better that former \cref{eq:convex_param}.
+    For various convex optimization tasks sensitive to initial conditions outlined \cref{sec:optimizations}, the latter parameterization of \cref{eq:uniform_param} generally performed better than the former \cref{eq:convex_param}.
     % \nocite{REVTEX41Control}
     % \nocite{apsrev41Control}
-    \bibliography{references, revtex-custom-bib}
+    % \bibliographystyle{plain}
+
+    \bibliography{references}
 \end{document}

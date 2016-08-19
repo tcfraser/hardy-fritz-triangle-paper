@@ -1,9 +1,505 @@
-\documentclass{article}
+\documentclass[aps, 10pt, english, twoside, pra, nofootinbib, longbibliography]{revtex4-1}
 
 \usepackage{shared}
 \usepackage{cleveref}
 
+% === Drafting Declarations ===
+\draftprofile[TC Fraser]{TC}{Red}
+\draftprofile[Elie Wolfe]{E}{Green}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\hgraph}{\mathcal{H}}
+\newcommand{\graph}{\mathcal{G}}
+\newcommand{\nodes}{\mathcal{N}}
+\newcommand{\weights}{\mathcal{W}}
+\newcommand{\edges}{\mathcal{E}}
+\newcommand{\trans}{\mathcal{T}}
+\newcommand{\ind}{\mathcal{I}}
+
+\newcommand{\ancestralindep}{\perp}
+
+\newcommand{\setoperator}[1]{%
+\expandafter\DeclareDocumentCommand\csname#1\endcsname{O{} O{} m}{{\text{#1}_{##1}^{##2}\!}\br{##3}}%
+}
+
+\setoperator{Pa}
+\setoperator{Ch}
+\setoperator{An}
+\setoperator{Sub}
+\setoperator{AnSub}
+% \newcommand{\Pa}[2][]{{\mathsf{Pa}_{#1}\!}\br{#2}}
+
+\newcommand{\term}[1]{\textcolor{Mahogany}{\textbf{#1}}}
+\newcommand{\outc}[1]{o\!\bs{#1}}
+\DeclareDocumentCommand{\prob}{O{} O{}}{\ifthenelse{\equal{#1}{}}{P}{P_{#1}}\ifthenelse{\equal{#2}{}}{}{\!\br{#2}}}
+\DeclareDocumentCommand{\probvec}{O{} O{}}{\ifthenelse{\equal{#1}{}}{\mathcal{P}}{\mathcal{P}_{#1}}\ifthenelse{\equal{#2}{}}{}{\!\br{#2}}}
+
+\usepackage{kbordermatrix}
+\renewcommand{\kbldelim}{(}% Left delimiter
+\renewcommand{\kbrdelim}{)}% Right delimiter
+% \setlength{\parindent}{0pt}
+
 \begin{document}
-    Hello World! \cref{eq:test}
-    \[ E = m c^2 \eq \label{eq:test} \]
+    \title{Inequalities Witnessing Quantum Incompatibility in The Triangle Scenario}
+    \author{Thomas C. Fraser}
+    \email{tcfraser@tcfraser.com}
+    \affiliation{Perimeter Institute for Theoretical Physics, Waterloo, Ontario, Canada \\ University of Waterloo, Waterloo, Ontario, Canada}
+    \date{\today}
+    \begin{abstract}
+        This document is my current working draft of a paper to do with causal inference, inflation, incompatibility inequalities, hypergraph transversals and quantum correlations.
+    \end{abstract}
+    \maketitle
+
+    \section{Introduction}
+    \section{Definitions \& Notation}
+
+    \begin{definition}
+        Borrowing the notation from \cite{Fritz_2014}, each random variable $v$ has a set of all possible outcomes called the \term{outcome space} or \term{valuation space} and is denoted $O_v$. When referencing a \textit{specific} element of $O_v$ or \textit{valuation} of $v$, the notation $\outc{v}$ is used. This notation generalizes to set of random variables $V = \bc{v_1, \ldots, v_{\abs{V}}}$;
+        a specific outcome of $\outc{V} \in O_V$ is used to reference a particular tuple or vector of outcomes,
+        \[ \outc{V} \defined \br{\outc{v_1}, \outc{v_2}, \ldots, \outc{v_{\abs{V}}} } = \br{\outc{v}}_{v \in V} \eq \label{eq:outcomespace}\]
+        It is important to note that the ordering of events in \cref{eq:outcomespace} is irrelevant. Similarly, the outcome space $O_V$ for a set of random variables $V$ is the \term{valuation product} of the individual outcome spaces,
+        \[ O_V \defined O_{v_1} \times \cdots \times O_{v_{\abs{V}}} \]
+        Where `$\times$' denotes is defined such that,
+        \[ \outc{A} \times \outc{B} \defined \br{\outc{a_1}, \ldots, \outc{a_{\abs{A}}}, \outc{b_1}, \ldots, \outc{b_{\abs{B}}}} \]
+        When referencing the probability that and set of variables $V$ has outcome $\outc{V}$ (say $v_1 = 0, v_2 = 3$), we intend for the following class of notations to be used interchangeably.
+        \[ \prob[V][\outc{V}] = \prob[][\outc{V}] = \prob[][\outc{v_1}\outc{v_2}] = \prob[][v_1 = 0, v_2 = 3] = \prob[][v_2 = 3, v_1 = 0] = \prob[v_1, v_2][03] \]
+    \end{definition}
+
+    \begin{definition}
+        \label{def:extendable}
+        An outcome $\outc{V}$ is said to be \term{extendable} to an outcome $\outc{W}$ (where $V \subseteq W$) if there exists an outcome $\outc{W\setminus V}$ such that:
+        \[ \outc{W} = \outc{W\setminus V} \times \outc{V} \]
+        The idea being that a \textit{less specific} outcome $\outc{V}$ can be made \textit{more specific} by assigning outcomes to the remaining random variables in $W \setminus V$. If such an outcome $\outc{W\setminus V}$ exists, it is unique.
+    \end{definition}
+
+    \begin{definition}
+        The set of all extendable outcomes of $\outc{V}$ in $O_{W}$ is called the \term{extendable set} and can be written as,
+        \[ \outc{V} \times O_{W\setminus V} \defined \bc{\outc{W} \in O_{W} \mid \exists \outc{W\setminus V} : \outc{W\setminus V} \times \outc{V} = \outc{W}} \]
+        The extendable set of $\outc{V}$ in $W$ is the set of all outcomes of $O_W$ that \textit{agree} with $\outc{V}$ about valuations for variables in $V$. In this language, two outcomes $\outc{V}$ and $\outc{W}$ are \term{compatible} if they are both extendable to some outcome $\outc{V \cup W}$. Equivalently, $\outc{V}$ and $\outc{W}$ agree on their valuations of $V \cap W$.
+    \end{definition}
+
+    \begin{example}
+        Consider two sets of random variables $V = \bc{a, b}$ and $W = \bc{a, b, c}$. Clearly $V \subseteq W$; a prerequisite for extendability. Also take all individual outcome spaces to be finite and of order 3: $O_a = O_b = O_c = \bc{1,2,3}$. Then $\outc{V} = \outc{\bc{a,b}} = \br{a = 1, b = 2}$ is extendable to the outcome $\outc{W} = \br{a = 1, b = 2, c = 1}$, and the extendable set of $\outc{V}$ in $O_{W}$ is,
+        \[ \outc{\bc{a,b}} \times O_c = \bc{\br{a = 1, b = 2, c = 1}, \br{a = 1, b = 2, c = 2}, \br{a = 1, b = 2, c = 3}} \]
+    \end{example}
+
+    % \begin{definition}
+    %     Two outcomes $\outc{V_1}$ and $\outc{V_2}$ over two distinct sets of random variables $V_1$ and $V_2$ are called \term{accordant} or \textit{compatible} if they are mutually realizable. In terms of extendable sets, $\outc{V_1}$ and $\outc{V_2}$ are accordant if there exists an outcome $\outc{V_1 \cup V_2} \in O_{V_1 \cup V_2}$ such that,
+    %     \[ \outc{V_1}, \outc{V_2} \subseteq \outc{V_1 \cup V_2}  \]
+    %     Accordance between two outcomes is the \textit{opposite} of exclusive.
+    % \end{definition}
+
+    \begin{definition}
+        \label{def:graph}
+        A \term{graph} is an ordered tuple $\br{\nodes, \edges}$ of \textit{nodes} and \textit{edges} respectively where the nodes can represent any object and the edges are pairs of nodes. For convenience of notation, one defines an index set over the nodes denoted $\ind_\nodes$.
+        \[ \nodes = \bc{n_i \mid i \in \ind_\nodes} \quad \edges = \bc{\bc{n_j, n_k} \mid j,k \in \ind_\nodes} \]
+    \end{definition}
+
+    \begin{definition}
+        \label{def:directed_graph}
+        A \term{directed graph} $\graph$ is an ordered tuple $\br{\nodes, \edges}$ of \textit{nodes} and \textit{edges} respectively where the nodes can represent any object and the edges are \textit{ordered} pairs of nodes. For convenience of notation, one defines an index set over the nodes denoted $\ind_\nodes$.
+        \[ \nodes = \bc{n_i \mid i \in \ind_\nodes} \quad \edges = \bc{n_j \to n_k \mid j,k \in \ind_\nodes} \]
+    \end{definition}
+
+    \begin{definition}
+        \label{def:graph_terms}
+        The following definitions are common language in directed graph theory. Let $n, m \in \nodes$ be example nodes of the graph $\graph$.
+        \begin{itemize}
+            \item The \term{parents of a node}: $\Pa[\graph]{n} \defined \bc{m \mid m \to n}$
+            \item The \term{children of a node}: $\Ch[\graph]{n} \defined \bc{m \mid n \to m}$
+            \item The \term{ancestry of a node}: $\An[\graph]{n} \defined \bigcup_{i\in\mathbb{W}} \Pa[\graph][i]{n}$ where $\Pa[\graph][i]{n} \defined \Pa[\graph]{\Pa[\graph][i-1]{n}}$ and $\Pa[\graph][0]{n} = n$
+        \end{itemize}
+        All of these terms can be generalized to sets of nodes $N \subseteq \nodes$ through union over the elements,
+        \begin{itemize}
+            \item The \term{parents of a node set}: $\Pa[\graph]{N} \defined \bigcup_{n\in N}\Pa[\graph]{n}$
+            \item The \term{children of a node set}: $\Ch[\graph]{N} \defined \bigcup_{n\in N}\Ch[\graph]{n}$
+            \item The \term{ancestry of a node set}: $\An[\graph]{N} \defined \bigcup_{n\in N}\An[\graph]{n}$
+        \end{itemize}
+        Moreover, an \term{induced subgraph} of $\graph$ due to a set of nodes $N \subseteq \nodes$ is the graph composed of $N$ and all edges $e \in \edges$ of the original graph that are contained in $N$.
+        \[ \Sub[\graph]{N} \defined \br{N, \bc{e_i \mid i \in \ind_\edges, e_i \subseteq N}}\]
+        An \term{ancestral subgraph} of $\graph$ due to $N \subseteq \nodes$ is the induced subgraph due to the ancestry of $N$.
+        \[ \AnSub[\graph]{N} \defined \Sub[\graph]{\An[\graph]{N}} \]
+    \end{definition}
+
+    \begin{definition}
+        \label{def:dag}
+        A \term{directed acyclic graph} or \term{DAG} $\graph$ is an directed graph \cref{def:directed_graph} with the additional property that no node $n$ is in its set of \term{ancestors}.
+        \[ \forall n \in \nodes : n \notin \bigcup_{i\in\mathbb{N}} \Pa[\graph][i]{n}\]
+        Notice the difference between using the natural numbers $\mathbb{N}$ to distinguish \textit{ancestors} from \textit{ancestry}.
+    \end{definition}
+
+    \begin{definition}
+        \label{def:hypergraph}
+        A \term{hypergraph} denoted $\hgraph$ is an ordered tuple $\br{\nodes, \edges}$ of \textit{nodes} and \textit{edges} respectively where the nodes can represent any object and the edges are \textit{subsets} of nodes. For convenience of notation, one defines an index set over the nodes and edges of a hypergraph $\hgraph$ denoted $\ind_\nodes$ and $\ind_\edges$ respectively.
+        \[ \hgraph = \br{\nodes, \edges} \quad \nodes = \bc{n_i \mid i \in \ind_\nodes} \quad \edges = \bc{e_i \mid i \in \ind_\edges, e_i \subseteq \nodes} \]
+        Note that whenever the index for an edge or node is arbitrary, it will be omitted. There is a dual correspondence between edges $e \in \edges$ and nodes $n \in \nodes$ in a Hypergraph. An edge $e$ is viewed as a set of nodes $\bc{n_i}$, and a node $n$ can be viewed as the set of edges $\bc{e_i}$ that contain it.
+    \end{definition}
+
+    \begin{definition}
+        \label{def:hgraph_trans}
+        A \term{hypergraph transversal} (or edge hitting set) $\trans$ of a hypergraph $\hgraph$ is a set of nodes $\trans \subseteq \nodes$ that have non-empty intersections with every edge in $\edges$.
+        \[ \trans = \bc{n_i \in \nodes \mid i \in \ind_\trans } \quad \forall e \in \edges : \trans \cap e \neq \emptyset \]
+    \end{definition}
+
+    \begin{definition}
+        A \term{minimal hypergraph transversal} $\trans$ is any valid transversal (\cref{def:hgraph_trans}) of $\hgraph$ where every node $n$ is \textit{necessary} to retain validity. For each node $n$ in $\trans$, $\trans \setminus n$ is no longer a transversal.
+        \[ \trans = \bc{n_i \in \nodes \mid i \in \ind_\trans } \quad \forall i \in \ind_\trans, \exists e \in \edges : \br{\trans \setminus n_i} \cap e = \emptyset \]
+    \end{definition}
+
+    \begin{definition}
+        A \term{weighted hypergraph} $\hgraph_\weights$ is a regular hypergraph satisfying \cref{def:hypergraph} equipped with a set of weights $\weights$ ascribed to each node such that a weighted hypergraph is written as a triplet $\br{\weights, \nodes, \edges}$.
+        \[ \weights = \bc{w_i \mid i \in \ind_\nodes, w_i \in \R} \]
+        One would say that a particular node $n_i$ carries weight $w_i$ for each $i \in \ind_\nodes$.
+    \end{definition}
+
+    \begin{definition}
+        A \term{bounded transversal} of a weighted hypergraph $\hgraph_\weights$ is a transversal $\trans$ of the unweighted hypergraph $\hgraph$ and a real number $t$ (denoted $\trans_{\leq t}$) such that the sum of the node weights of the transversal is bounded by $t$.
+        \[ \trans_{\leq t} = \bc{n_i \mid i \in \ind_\trans} \quad \text{s.t.} \sum_{j\in\ind_\trans} w_j \leq t \]
+        One can definte analogous \term{(strictly) upper/lower bounded transversals} by considering modifications of the notation: $\trans_{< t}, \trans_{\geq t}, \trans_{> t}$.
+    \end{definition}
+
+    \begin{definition}
+        A \term{causal structure} is simply a DAG with the extra classification of each node into one of two categories; the \term{latent nodes} and \term{observed nodes} denoted $\nodes_L$ and $\nodes_O$. The latent nodes correspond to random variables that are either hidden through some fundamental process or cannot/will not be measured. The observed nodes are random variables that are measurable. Every node is either latent or observed and no node is both:
+        \[ \nodes_L \cap \nodes_O = \emptyset \qquad \nodes_L \cup \nodes_O = \nodes \]
+    \end{definition}
+
+    \begin{definition}
+        The \term{product distribution} two distributions is denoted as usual with $\times$ and is defined as,
+        \[ \br{\prob[v] \times \prob[w]}\br{\outc{v}, \outc{w}} \defined \prob[v][\outc{v}]\prob[w][\outc{w}] \]
+        A product distribution of $k$ distributions is defined recursively,
+        \[ \prod_{i=1}^{k} \prob[v_i] \defined \br{\prob[v_1] \times \cdots \times \prob[v_k]} \]
+    \end{definition}
+
+    \begin{definition}
+        The \term{marginalization} of a distribution $\prob[v \cup w]$ to the distribution $\prob[v]$ is denoted $\sum_{w} \prob[v \cup w] = \prob[v]$ and is defined such that,
+        \[ \forall \outc{v} \in O_v : \br{\sum_{w} \prob[v, w]}\br{\outc{v}} \defined \sum_{o\bs{w} \in O_w} \prob[v, w][\outc{v}, \outc{w}] \]
+    \end{definition}
+
+    \todo[TC]{How many definitions do I need to write??}
+
+    \section{Triangle Scenario}
+    \todo[TC]{Discuss the triangle scenario, previous work done on it, etc.}
+    Focusing on the inflation depicted in \cref{fig:inflated_triangle_scenario}, we obtained the maximally pre-injectable sets through the procedure outlined in \cite{Inflation}.
+    \begin{equation}
+        \begin{gathered}
+            \textbf{Maximal Pre-injectable Sets $\Pi$} \\
+            \bc{A_1, B_1, C_1, A_4, B_4, C_4} \\
+            \bc{A_1, B_2, C_3, A_4, B_3, C_2} \\
+            \bc{A_2, B_3, C_1, A_3, B_2, C_4} \\
+            \bc{A_2, B_4, C_3, A_3, B_1, C_2} \\
+            \bc{A_1, B_3, C_4} \\
+            \bc{A_1, B_4, C_2} \\
+            \bc{A_2, B_1, C_4} \\
+            \bc{A_2, B_2, C_2} \\
+            \bc{A_3, B_3, C_3} \\
+            \bc{A_3, B_4, C_1} \\
+            \bc{A_4, B_1, C_3} \\
+            \bc{A_4, B_2, C_1}
+        \end{gathered}
+        \qquad
+        \begin{gathered}
+            \textbf{Ancestral Independences} \\
+            \bc{A_1, B_1, C_1} \ancestralindep \bc{A_4, B_4, C_4} \\
+            \bc{A_1, B_2, C_3} \ancestralindep \bc{A_4, B_3, C_2} \\
+            \bc{A_2, B_3, C_1} \ancestralindep \bc{A_3, B_2, C_4} \\
+            \bc{A_2, B_4, C_3} \ancestralindep \bc{A_3, B_1, C_2} \\
+            \bc{A_1} \ancestralindep \bc{B_3} \ancestralindep \bc{C_4} \\
+            \bc{A_1} \ancestralindep \bc{B_4} \ancestralindep \bc{C_2} \\
+            \bc{A_2} \ancestralindep \bc{B_1} \ancestralindep \bc{C_4} \\
+            \bc{A_2} \ancestralindep \bc{B_2} \ancestralindep \bc{C_2} \\
+            \bc{A_3} \ancestralindep \bc{B_3} \ancestralindep \bc{C_3} \\
+            \bc{A_3} \ancestralindep \bc{B_4} \ancestralindep \bc{C_1} \\
+            \bc{A_4} \ancestralindep \bc{B_1} \ancestralindep \bc{C_3} \\
+            \bc{A_4} \ancestralindep \bc{B_2} \ancestralindep \bc{C_1}
+        \end{gathered}
+    \end{equation}
+    As can be counted, there are $12$ maximally pre-injectable sets which will be indexed $1$ through $12$ in the order seen above ($\Pi = \bc{\Pi_1, \ldots, \Pi_{12}}$)
+
+    % =========================
+    % Causal Structure Diagrams
+    % =========================
+    \definecolor{obs_outline}{RGB}{51,157,215}
+    \definecolor{obs_fill}{RGB}{222,253,255}
+    \definecolor{obs_text}{RGB}{0,0,0}
+    \definecolor{lat_outline}{RGB}{251,141,54}
+    \definecolor{cause}{RGB}{30, 0, 30}
+    \definecolor{lat_fill}{RGB}{255,213,153}
+    \definecolor{lat_text}{RGB}{0,0,0}
+    \tikzset{square/.style={regular polygon,regular polygon sides=4}}
+    \tikzset{triangle/.style={regular polygon,regular polygon sides=3}}
+    \tikzset{observed/.style={obs_text, triangle, thick, draw=obs_outline, fill=obs_fill, inner sep=0em, minimum size=3em}}
+    \tikzset{latent/.style={lat_text, circle, thick, draw=lat_outline, fill=lat_fill}}
+    % \tikzset{cause/.style={mid arrow/.style={postaction={decorate,decoration={markings, mark=at position .5 with {\arrow[#1]{stealth}}}}},}}
+    \tikzset{
+      % style to apply some styles to each segment of a path
+      on each segment/.style={
+        decorate,
+        decoration={
+          show path construction,
+          moveto code={},
+          lineto code={
+            \path [#1]
+            (\tikzinputsegmentfirst) -- (\tikzinputsegmentlast);
+          },
+          curveto code={
+            \path [#1] (\tikzinputsegmentfirst)
+            .. controls
+            (\tikzinputsegmentsupporta) and (\tikzinputsegmentsupportb)
+            ..
+            (\tikzinputsegmentlast);
+          },
+          closepath code={
+            \path [#1]
+            (\tikzinputsegmentfirst) -- (\tikzinputsegmentlast);
+          },
+        },
+      },
+      % style to add an arrow in the middle of a path
+      mid arrow/.style={postaction={decorate,decoration={
+            markings,
+            mark=at position .6 with {\arrow[scale=1.5, cause]{stealth}}
+          }}},
+    }
+    \begin{figure}
+    \begin{center}
+        \begin{minipage}[b]{.48\textwidth}
+            \centering
+            \scalebox{1.0}{%
+            \begin{tikzpicture}[scale=1]
+                \begin{scope}[every node/.style=observed]
+                    \node (C) at (-2, 0) {$C$};
+                    \node (B) at (2, 0) {$B$};
+                    \node (A) at (0, {2*sqrt(3)}) {$A$};
+                \end{scope}
+                \begin{scope}[every node/.style=latent]
+                    \node (X) at (-1, {sqrt(3)}) {$X$};
+                    \node (Y) at (1, {sqrt(3)}) {$Y$};
+                    \node (Z) at (0, 0) {$Z$};
+                \end{scope}
+                \begin{scope}[every path/.style={draw=cause, thick}]
+                    \path[postaction={on each segment={mid arrow}}]
+                    (X) -- (A)
+                    (X) -- (C)
+                    (Y) -- (A)
+                    (Y) -- (B)
+                    (Z) -- (B)
+                    (Z) -- (C);
+                \end{scope}
+            \end{tikzpicture}
+            }
+            \caption{The casual structure of the triangle scenario. Three variables $A,B,C$ are observable and illustrated as triangles, while $X, Y, Z$ are latent variables illustrated as circles.}
+            \label{fig:triangle_scenario}
+        \end{minipage}\hspace{0.04\textwidth}%
+        \begin{minipage}[b]{.48\textwidth}
+            \centering
+            \scalebox{0.8}{%
+            \newcommand{\ift}{2.3}
+            \begin{tikzpicture}[scale=2]
+                \begin{scope}[every node/.style=observed]
+                    \node (C4) at (-2, 0) {$C_4$};
+                    \node (C3) at ({-2 + 1/\ift}, {1/(\ift*sqrt(3))}) {$C_3$};
+                    \node (C2) at ({-2 + 2*1/\ift}, {2*1/(\ift*sqrt(3))}) {$C_2$};
+                    \node (C1) at ({-2 + 3*1/\ift}, {3*1/(\ift*sqrt(3))}) {$C_1$};
+                    \node (B4) at (2, 0) {$B_4$};
+                    \node (B3) at ({2 - 1/\ift}, {1/(\ift*sqrt(3))}) {$B_3$};
+                    \node (B2) at ({2 - 2*1/\ift}, {2*1/(\ift*sqrt(3))}) {$B_2$};
+                    \node (B1) at ({2 - 3*1/\ift}, {3*1/(\ift*sqrt(3))}) {$B_1$};
+                    \node (A4) at (0, {2*sqrt(3)}) {$A_4$};
+                    \node (A3) at (0, {2*sqrt(3) - 2/sqrt(3)*(1/\ift)}) {$A_3$};
+                    \node (A2) at (0, {2*sqrt(3) - 2*2/sqrt(3)*(1/\ift)}) {$A_2$};
+                    \node (A1) at (0, {2*sqrt(3) - 3*2/sqrt(3)*(1/\ift)}) {$A_1$};
+                \end{scope}
+                \begin{scope}[every node/.style=latent]
+                    \node (X2) at (-1, {sqrt(3)}) {$X_2$};
+                    \node (X1) at ({-1 + 1/\ift}, {sqrt(3) - 1/(\ift*sqrt(3))}) {$X_1$};
+                    \node (Y2) at (1, {sqrt(3)}) {$Y_2$};
+                    \node (Y1) at ({1 - 1/\ift}, {sqrt(3) - 1/(\ift*sqrt(3))}) {$Y_1$};
+                    \node (Z1) at (0, 0.5) {$Z_1$};
+                    \node (Z2) at (0, 0) {$Z_2$};
+                \end{scope}
+                \begin{scope}[every path/.style={draw=cause, thick}]
+                    \path[postaction={on each segment={mid arrow}}]
+                    (X2) -- (A4) (X2) -- (C4) (X2) -- (C2) (X2) -- (A3)
+                    (Y2) -- (A4) (Y2) -- (B4) (Y2) -- (A2) (Y2) -- (B3)
+                    (Z2) -- (B4) (Z2) -- (C4) (Z2) -- (B2) (Z2) -- (C3)
+                    (X1) -- (A1) (X1) -- (C1) (X1) -- (C3) (X1) -- (A2)
+                    (Y1) -- (A1) (Y1) -- (B1) (Y1) -- (A3) (Y1) -- (B2)
+                    (Z1) -- (B1) (Z1) -- (C1) (Z1) -- (B3) (Z1) -- (C2)
+                    ;
+                \end{scope}
+            \end{tikzpicture}
+            }
+            \caption{An inflated causal structure of the triangle scenario \cref{fig:triangle_scenario}.}
+            \label{fig:inflated_triangle_scenario}
+        \end{minipage}
+    \end{center}
+    \end{figure}
+    % =========================
+    % =========================
+
+    \section{Summary of the Inflation Technique}
+    The causal inflation technique, first pioneered by Wolfe, Spekkens, and Fritz \cite{Inflation} and inspired by the \textit{do calculus} and \textit{twin networks} of Ref. \cite{Pearl_2009}, is a family of causal inference techniques that can be used to determine if a probability distribution is compatible or incompatible with a given causal structure. As a preliminary summary, the inflation technique begins by \textit{augmenting} a causal structure with additional nodes, producing the \textit{inflated} causal structure, and then exposes how causal inference tasks on the inflated causal structure can be used to make inferences on the original causal structure. Equipped with the common graph-theoretic terminology and notation of \cref{def:graph_terms}, an inflation can be formally defined as follows:
+    \begin{definition}
+        An \term{inflation} of a causal structure $\graph$ is another causal structure $\graph'$ such that:
+        \[ \forall n' \in \nodes' : \AnSub[\graph']{n'} \sim \AnSub[\graph]{n} \]
+        Where `$\sim$' is notation for equivalence up to removal of the copy-index. To clarify, each node in an inflated causal structure $n' \in \nodes'$ shares a \textit{label} assigned to a node $n \in \nodes$ in the original causal structure together with an additional index called the \term{copy-index}.
+    \end{definition}
+    \begin{definition}
+        A set of \term{causal parameters} for a particular causal structure $\graph$ is the specification of a conditional distribution for every node $n \in \nodes$ given it's parents in $\graph$.
+        \[ \bc{\prob[n \mid \Pa[\graph]{n}] \mid n \in \nodes} \]
+    \end{definition}
+    \todo[TC]{Clean up what is meant by copy index, example maybe?}
+    \todo[TC]{Define injectable sets}
+    \todo[TC]{Define pre-injectable sets and then it's connection to probabilities}
+    \todo[TC]{Define pre-injectable sets}
+    \todo[TC]{State the main Compatibility lemma of inflation}
+    \section{Compatibility, Contextuality and the Marginal Problem}
+    In order to determine if a given marginal distribution $\prob[V]$ or set of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ is compatible with a causal structure $\graph$, one should first formalize what is meant by \textit{compatible}.
+    \begin{definition}
+        \label{def:compatible}
+        A marginal distribution $\prob[V]$ is \term{compatible} with a causal structure $\graph$ (where it is assumed that $V \subseteq \nodes_O$) if there exists a \textit{choice} of causal parameters $\bc{\prob[n \mid \Pa[\graph]{n}] \mid n \in \nodes}$ such that $\prob[V]$ can be \textit{recovered} from the following series of operations:
+
+        \todo[TC]{Define this notation here}
+        \begin{enumerate}
+            \item First obtain a joint distribution over \textit{all} nodes of of the causal structure,
+            \[ \prob[\nodes] = \prod_{n \in \nodes} \prob[n \mid \Pa[\graph]{n}] \]
+            \item Then marginalize over the latent nodes of $\graph$,
+            \[ \prob[\nodes_O] = \sum_{\nodes_L} \prob[\nodes] \]
+            \item Finally marginalize over the observed nodes not in $V$ to obtain $\prob[V]$,
+            \[ \prob[V] = \sum_{\nodes_O \setminus V} \prob[\nodes_O] \]
+        \end{enumerate}
+        A set of marginal distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ is compatible with $\graph$ if each of the distributions can be made compatible by the \textit{same} choice of causal parameters.
+        A distribution $\prob[V]$ or set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ is said to be \term{incompatible} with a causal structure if there \textit{does not exist} a set of causal parameters with the above mentioned property.
+
+        \todo[TC]{Source this?}
+    \end{definition}
+
+    Operations 2 and 3 of \cref{def:compatible} are related to the \textit{marginal problem}.
+    \begin{definition}
+        \label{def:marginal_problem}
+        \term{The Marginal Problem:} Given a set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ where $V_i \subseteq \mathcal{V}$ for some set of random variables $\mathcal{V}$ and $k \geq 2$, does there exist a joint distribution $\prob[\mathcal{V}]$ such that each given distribution $\prob[V_i]$ can be obtained from marginalizing $\prob[\mathcal{V}]$?
+        \[ \forall i \in \bc{1, \ldots, k} : \prob[V_i] = \sum_{\mathcal{V} \setminus V_i} \prob[\mathcal{V}] \]
+        Typically (although not strictly necessary), $\mathcal{V}$ is taken to mean the union of all $V_i$'s.
+        \[ \mathcal{V} = V_1 \cup \cdots \cup V_k = \bigcup_{i=1}^{k} V_i \eq \label{eq:marginals_union} \]
+    \end{definition}
+
+    \begin{definition}
+        \label{def:marginal_model}
+        A reoccurring motif of these discussions will be the set of distributions $\bc{\prob[V_1], \ldots, \prob[V_k]}$ mentioned in \cref{def:marginal_model}. In agreement with \cite{Fritz_2011} we will call this set of distributions a \term{marginal model} and denote it $\prob^\mathcal{M}$ provided that they are \textit{compatible}:
+        \[ \forall i \neq j \text{ if } V_i \cap V_j \neq \emptyset \text{ then } \sum_{V_i \setminus V_j} \prob[V_i] = \sum_{V_j \setminus V_i} \prob[V_j]  \]
+        We call the set of subsets $\bc{V_1, \ldots, V_k}$ the marginal contexts or the \term{maximal marginal scenario} and an individual $V_i$ a \term{marginal context}. Finally we will denote the union of all contexts $\mathcal{V}$ and define it exactly as in \cref{eq:marginals_union}
+    \end{definition}
+
+    \todo[TC]{Discuss Compatibility, connection to cooperative games/resources, bell incompatibility?}
+    \todo[TC]{Connection between contextuality and Compatibility via the marginal problem for causal parameters}
+    \todo[TC]{Discuss what is meant by a `complete' solution to the marginal problem}
+    \todo[TC]{Maybe define the possibilistic marginal problem for later}
+    \section{The Fritz Distribution}
+    The \textbf{Fritz distribution} $P_F$ is a quantum-accessible distribution known to be incompatible with the triangle scenario. Explicitly, $P_F$ is a three-party ($A,B,C$), four-outcome ($1,2,3,4$) distribution that has form as follows:
+    \begin{align*}
+    \prob[F][111] = \prob[F][221] = \prob[F][412] = \prob[F][322] = \prob[F][233] = \prob[F][143] = \prob[F][344] = \prob[F][434] &= \f{1}{32}\br{2 + \sqrt{2}} \\
+    \prob[F][121] = \prob[F][211] = \prob[F][422] = \prob[F][312] = \prob[F][243] = \prob[F][133] = \prob[F][334] = \prob[F][444] &= \f{1}{32}\br{2 - \sqrt{2}}
+    \end{align*}
+    Here the notation $\prob[F][abc] = \prob[ABC][abc] = \prob[][A=a,B=b,C=c]$ is used. The Fritz distribution $\prob[F]$ can be realized with the following quantum configuration:
+    \begin{gather*}
+    \rho_{AB} = \ket{\Psi^+}\bra{\Psi^+} \quad \rho_{BC} = \rho_{CA} = \ket{\Phi^+}\bra{\Phi^+} \\
+    M_{A} = \bc{\ket{0\psi_0}\bra{0\psi_0}, \ket{0\psi_{\pi}}\bra{0\psi_{\pi}}, \ket{1\psi_{-\pi/2}}\bra{1\psi_{-\pi/2}}, \ket{1\psi_{\pi/2}}\bra{1\psi_{\pi/2}}} \\
+    M_{B} = \bc{\ket{\psi_{\pi/4}0}\bra{\psi_{\pi/4}0}, \ket{\psi_{5\pi/4}0}\bra{\psi_{5\pi/4}0}, \ket{\psi_{3\pi/4}1}\bra{\psi_{3\pi/4}1}, \ket{\psi_{-\pi/4}1}\bra{\psi_{-\pi/4}1}} \\
+    M_{C} = \bc{\ket{00}\bra{00}, \ket{01}\bra{01}, \ket{10}\bra{10}, \ket{11}\bra{11}} \\
+    \end{gather*}
+    Where for convenience of notation $\psi_x$ is used to denote the superposition,
+    \[ \ket{\psi_x} = \f{1}{\sqrt{2}}\br{\ket{0} + e^{ix}\ket{1}} \]
+    Additionally $\ket{\Psi^+} = \f{1}{\sqrt{2}}\br{\ket{01} + \ket{10}}$ and $\ket{\Phi^+} = \f{1}{\sqrt{2}}\br{\ket{00} + \ket{11}}$ are two maximally entangled Bell states.
+    Fritz first proved it's incompatibility \cite{Fritz_2012} by showing $C$ acts a moderator to ensure measurement pseudo-settings for $A$ and $B$ are independent, satisfying non-broadcasting requirements for the standard Bell scenario. In fact, by coarse-graining outcomes for $A$ and $B$ and treating $C$ as a measurement-setting moderator, $P_F$ maximally violates the CHSH inequality. To illustrate this, begin with the CHSH inequality \cite{CHSH_Original},
+    \[ \ba{AB|S_A=1, S_B=1} + \ba{AB|S_A=1, S_B=2} + \ba{AB|S_A=2, S_B=1} - \ba{AB|S_A=2, S_B=2} \leq 2 \eq \label{eq:CHSH}\]
+    Where $\ba{AB|S_A=i, S_B=j}$ is the correlation between $A$ and $B$ given the measurement settings for $A$ ($B$) is $i$ ($j$) respectively. Next, each of $C$'s outcomes become the condition settings in \cref{eq:CHSH},
+    \[ \ba{AB|C=2} + \ba{AB|C=3} + \ba{AB|C=4} - \ba{AB|C=1} \leq 2 \]
+    Finally, specifying the correlation between $A$ and $B$ to be defined in terms of a $\bc{1,2,3,4} \rightarrow \bc{\br{1,4}, \br{2,3}}$ coarse-graining,
+    \[ \f{\sqrt{2}}{2} + \f{\sqrt{2}}{2} + \f{\sqrt{2}}{2} - \f{-\sqrt{2}}{2} \leq 2 \]
+    \[ 2\sqrt{2} \leq 2 \]
+    Which corresponds to the maximum quantum violation of the CHSH inequality \cref{eq:CHSH}
+
+    \todo[TC]{Discuss non-uniqueness and relabeling}
+    \todo[TC]{Summarize Problem 2.17 in fritz BBT, make it more formal}
+    \section{Certificate Inequalities}
+    \subsection{Casting the Inflated Marginal Problem as a Linear Program}
+    After obtaining the maximal pre-injectable sets associated with a particular inflation, one can write the marginal problem of \cref{def:marginal_problem} as a linear program. The key observation is that marginalization is a \textit{linear} operator that can be performed via a matrix multiplication. To do this, we will define the \textit{marginalization matrix}.
+    \begin{definition}
+        The \term{marginalization matrix} $M$ for a marginal scenario $\bc{V_1, \dots, V_k}$ is a bit-wise matrix where the columns are indexed by \textit{joint} outcomes $\outc{\mathcal{V}} \in O_{\mathcal{V}}$ and the rows are indexed by \textit{marginal} outcomes corresponding to all outcomes $\outc{V_i} \in O_{V_i}$ of the marginal contexts $V_i$. The entries of $M$ are populated whenever a row index is extendable to a column index.
+        \[ M_{\br{o\bs{V_i}, o\bs{\mathcal{V}}}} = \begin{cases}
+            1 & \exists \outc{\mathcal{V} \setminus V_i} \text{ such that } \outc{V_i} \times \outc{\mathcal{V} \setminus V_i} = \outc{\mathcal{V}} \\
+            0 & \text{otherwise}
+        \end{cases} \]
+        The marginalization matrix has $\abs{O_\mathcal{V}}$ columns and $\sum_{i=1}^{k} \abs{O_{V_i}}$ rows. The number of non-zero entries of $M$ is a simple expression,
+        \[ \sum_{i=1}^{k} \abs{O_{V_i}}\abs{O_{\mathcal{V} \setminus V_i}} = \sum_{i=1}^{k} \abs{O_{\mathcal{V}}} = k\abs{O_{\mathcal{V}}} \]
+        Each of the $k$ elements of $\bc{V_1, \ldots, V_k}$ contributes a single non-zero entry to each column of $M$, resulting in $k\abs{O_\mathcal{V}}$ total non-zero entries.
+
+        Note that the row and column indices of the marginalization matrix will be referred to very frequently. We will refer to the
+    \end{definition}
+    \todo[TC]{Computationally Efficient generation?}
+
+    To illustrate this concretely, consider the following example:
+    \begin{example}
+        Suppose one has $4$ binary random variables $\mathcal{V} = \bc{a,b,c}$ in mind and $2$ subsets $\bc{\bc{a,c}, \bc{b}}$. Then the marginalization matrix is:
+        \[ M = \kbordermatrix{
+            (a,b,c) = & (0,0,0) & (0,0,1) & (0,1,0) & (0,1,1) & (1,0,0) & (1,0,1) & (1,1,0) & (1,1,1) \\
+            (a=0, c=0) & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+            (a=0, c=1) & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 \\
+            (a=1, c=0) & 0 & 0 & 0 & 0 & 1 & 0 & 1 & 0 \\
+            (a=1, c=1) & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 1 \\
+            (b=0)      & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 \\
+            (b=1)      & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1
+        } \]
+    \end{example}
+
+    In order to describe how marginalization can be written as matrix multiplication $M \cdot x = b$, we need to describe how to define two more quantities:
+
+    \begin{definition}
+        The \term{joint distribution vector} $\probvec[\mathcal{V}]$ for a probability distribution $\prob[\mathcal{V}]$ is the vector whose entries are the positive, real-valued probabilities that $\prob[\mathcal{V}]$ assigns to each outcome of $\outc{\mathcal{V}}$ of $O_\mathcal{V}$. $\probvec[\mathcal{V}]$ shares the same indices as the \textit{column} indices of $M$.
+        \[ \probvec[\mathcal{V}]^\intercal = \bs{\prob[\mathcal{V}][\outc{\mathcal{V}}]}_{o\bs{\mathcal{V}} \in O_{\mathcal{V}}} \]
+    \end{definition}
+    \begin{definition}
+        The \term{marginal distribution vector} $\probvec[\bc{V_1, \ldots, V_k}]$ for a marginal model $\bc{P_{V_1}, \ldots, P_{V_k}}$ is the vector whose entries are probabilities over the set of \term{marginal outcomes} $\bigcup_{j=1}^{k} O_{V_j}$. $\probvec[\bc{V_1, \ldots, V_k}]$ shares the same indices as the \textit{row} indices of $M$.
+        \[ \probvec[\bc{V_1, \ldots, V_k}]^\intercal = \bs{\prob[V_i][\outc{V_i}] }_{o\bs{V_i} \in \bigcup_{j=1}^{k} O_{V_j}} \]
+    \end{definition}
+    The marginal and joint distribution vectors are related via the marginalization matrix $M$. Given a joint distribution vector $\probvec[\mathcal{V}]$ one can obtain the marginal distribution vector $\probvec[\bc{V_1, \ldots, V_k}]$ by multiplying $M$ by $\probvec[\mathcal{V}]$.
+    \[ \probvec[\bc{V_1, \ldots, V_k}] = M \cdot \probvec[\mathcal{V}] \eq \label{eq:marginal_problem_matrix} \]
+    \todo[TC]{Discuss non-unique but consistent ordering of $M$, $\probvec[\mathcal{V}]$ and $\probvec[\bc{V_1, \ldots, V_k}]$}
+
+    The marginal problem can now be rephrased in the language of the marginalization matrix. Suppose one obtains a marginal distribution vector $\probvec[\bc{V_1, \ldots, V_k}]$. The marginal problem becomes equivalent to the question: \textit{Does there exist a joint distribution vector $\probvec[\mathcal{V}]$ such that \cref{eq:marginal_problem_matrix} holds?}
+
+    \begin{definition}
+        \label{def:marginal_linear_program}
+        \term{The Marginal Linear Program} is the following linear program:
+        \begin{alignat*}{2}
+            & \text{minimize:} \quad&& \emptyset \cdot x\\
+            & \text{subject to:} && x \succeq 0 \\
+            & && M \cdot x = \probvec[\bc{V_1, \ldots, V_k}]
+        \end{alignat*}
+        If this ``optimization''\footnote{``Optimization'' is presented in quotes here because the minimization objective is trivially always zero ($\emptyset$ denotes the null vector of all zero entries). The primal value of the linear program is of no interest, all that matters is its \textit{feasibility}.} is \textit{feasible}, then there exists a vector $x$ than can satisfy \cref{eq:marginal_problem_matrix} and is a valid joint distribution vector. Therefore feasibility implies that $\prob[\mathcal{V}] = x$, solving the marginal problem with positive result. Moreover if the marginal linear program is \textit{infeasible}, then there \textit{does not} exist a joint distribution $\prob[\mathcal{V}]$ over all random variables.
+    \end{definition}
+
+    \subsection{Infeasibility Certificates}
+    The dual marginal linear program also provides an answer to the marginal problem. To prove this, first notice that the dual problem is \textit{never infeasible}; by choosing $y$ to be trivially the null vector $\emptyset$ of appropriate size, all constraints are satisfied. Secondly if $y \cdot M \succeq 0$ and $x \succeq 0$, then the following must hold if the primal is feasible:
+    \[ y \cdot \probvec[\bc{V_1, \ldots, V_k}] =  y \cdot M \cdot x \geq 0 \eq \label{eq:dual_marginal_ineq} \]
+    Therefore the \textit{sign} of the dual value $d \defined \min \br{y \cdot \probvec[\bc{V_1, \ldots, V_k}]}$ solves the marginal problem. If $d < 0$ then \cref{eq:dual_marginal_ineq} is violated and therefore the marginal problem has negative result. Likewise if $d$ satisfies \cref{eq:dual_marginal_ineq}, then a joint distribution $\prob[\mathcal{V}]$ exists. Before continuing, an important observation needs to be made. If $d \geq 0$, then it is exactly $d = 0$, due to the existence of the trivial $y = \emptyset$. This observation is an instance of the \textit{Complementary Slackness Property} of \cite{Bradley_1977}. \comment[TC]{Is this really the CSP?} Moreover, if $d < 0$, then it is unbounded $d = -\inf$. This latter point becomes clear upon recognizing that for any $y$ such that $d < 0$, another $y'$ can be constructed by multiplying $y$ by a real constant $\al$ greater than one such that,
+    \[ y' = \al y \mid \al > 1 \implies d' = \al d < d \]
+    Since a more negative $d'$ can always be found, it must be that $d$ is unbounded. This is a demonstration of the fundamental \textit{Unboundedness Property} of \cite{Bradley_1977}; if the dual is unbounded, then the primal is infeasible.
+
+
+    % \cite{Pearl_2009} \cite{Mansfield_2012}
+    % Hello Worldss! \cref{eq:test}
+    % \[ E = m c^2 \eq \label{eq:test} \]
+    % \bibliographystyle{plain}
+    \bibliography{references}
 \end{document}
